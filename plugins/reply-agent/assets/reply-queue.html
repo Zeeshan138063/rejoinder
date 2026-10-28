@@ -134,6 +134,10 @@ kbd{font:11px var(--mono);color:var(--ink-3);border:1px solid var(--line-2);bord
 .chip:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
 .chip svg.i{width:12px;height:12px}
 .chip.reply{border-style:dashed;color:var(--ink)}
+.tchip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px 3px 8px;font:500 12px var(--sans);color:var(--ink-2);text-decoration:none}
+.tchip b{font:600 12px var(--mono);color:var(--accent)}
+.tchip .st{padding:1px 6px;font-size:10px}
+.tchip:hover{border-color:var(--accent)}
 .gaps{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--quick);background:var(--quick-soft);border-radius:9px;padding:8px 10px}
 .gaps svg.i{width:14px;height:14px;margin-top:2px}
 .composer{border:1px solid var(--line-2);border-radius:11px;background:var(--bg);overflow:hidden;transition:border-color .2s,box-shadow .2s}
@@ -573,8 +577,13 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     if(d.context){ var cx=el("div","ctx"); cx.appendChild(icon("info")); cx.appendChild(el("span",null,d.context)); c.appendChild(cx); }
     if(Array.isArray(d.links)){
       var lk=el("div","chips"), ou=openUrl(d);
-      d.links.forEach(function(l){ if(l && typeof l.url==="string" && /^https:\/\//.test(l.url) && l.url!==ou){ var a=withIcon("a","chip","link",l.label||"Link"); a.href=l.url; a.target="_blank"; a.rel="noopener"; lk.appendChild(a); } });
+      d.links.forEach(function(l){ if(l && typeof l.url==="string" && /^https:\/\//.test(l.url) && l.url!==ou && !(JIRA.cfg && /^[A-Z][A-Z0-9]{1,9}-\d+$/.test(l.label||""))){ var a=withIcon("a","chip","link",l.label||"Link"); a.href=l.url; a.target="_blank"; a.rel="noopener"; lk.appendChild(a); } });
       if(lk.childNodes.length) c.appendChild(lk);
+    }
+    var keys=cardKeys(d);
+    if(keys.length && JIRA.cfg){
+      var tc=el("div","chips"); tc.dataset.tkeys=keys.join(",");
+      fillTicketChips(tc,keys); c.appendChild(tc);
     }
     if(d.gaps && b!=="done"){ var g=el("div","gaps"); g.appendChild(icon("warn")); g.appendChild(el("span",null,"Fill in before sending: "+d.gaps)); c.appendChild(g); }
 
@@ -954,6 +963,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     JIRA.loading=false;
     if(JIRA.issues) $("c-jira").textContent=JIRA.issues.length;
     renderSources();
+    document.querySelectorAll("[data-tkeys]").forEach(function(box){ fillTicketChips(box,box.dataset.tkeys.split(",")); });
     if(state.tab==="jira") renderJira();
   }
 
@@ -1066,6 +1076,32 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
   setInterval(function(){ if(state.tab==="jira" && JIRA.cfg && !JIRA.loading && document.visibilityState==="visible"){ var a=document.activeElement; if(!a||(a.id!=="jq"&&a.id!=="askq"&&a.id!=="aq2")) jiraLoad(false); } },600000);
 
 
+
+
+  /* live Jira status on reply cards */
+  var KEYRE=/\b[A-Z][A-Z0-9]{1,9}-\d+\b/g, TKX={}, tkPending={}, tkTimer=null;
+  function cardKeys(d){ var txt=[d.message,d.context,d.draft].join(" "); (Array.isArray(d.links)?d.links:[]).forEach(function(l){ txt+=" "+(l&&l.label||""); }); var seenK={}, out=[]; (txt.match(KEYRE)||[]).forEach(function(k){ if(!seenK[k]){ seenK[k]=1; out.push(k); } }); return out.slice(0,4); }
+  function ticketByKey(k){ var L=JIRA.issues||[]; for(var x=0;x<L.length;x++) if(L[x].key===k) return L[x]; return TKX[k]||null; }
+  function fillTicketChips(box,keys){
+    box.textContent="";
+    keys.forEach(function(k){
+      var i=ticketByKey(k);
+      if(i===false) return; /* looked up, not found or no access */
+      var a=el("a","tchip"); a.appendChild(icon("ticket")); a.appendChild(el("b",null,k));
+      if(i){ var st=jget(i,"status")||{}; a.appendChild(el("span","st "+((st.statusCategory&&st.statusCategory.key)||"new"),st.name||"Open")); var asg=jget(i,"assignee"); a.title=(jget(i,"summary")||"")+(asg&&asg.displayName?" · "+asg.displayName:""); var u=i.webUrl||((JIRA.cfg.site||"")+"/browse/"+k); if(/^https:\/\//.test(u)){ a.href=u; a.target="_blank"; a.rel="noopener"; } }
+      else { a.appendChild(el("span","st","checking…")); tkPending[k]=1; }
+      box.appendChild(a);
+    });
+    if(Object.keys(tkPending).length){ clearTimeout(tkTimer); tkTimer=setTimeout(fetchPendingKeys,400); }
+  }
+  async function fetchPendingKeys(){
+    var ks=Object.keys(tkPending).filter(function(k){ return !(k in TKX) && !ticketByKey(k); }); tkPending={};
+    if(!ks.length||!JIRA.cfg) return;
+    ks.forEach(function(k){ TKX[k]=null; });
+    try{ var r=await jiraSearch("key in ("+ks.slice(0,40).join(",")+")",false,1); var got={}; r.issues.forEach(function(i){ TKX[i.key]=i; got[i.key]=1; }); ks.forEach(function(k){ if(!got[k]) TKX[k]=false; }); }
+    catch(e){ ks.forEach(function(k){ TKX[k]=false; }); }
+    document.querySelectorAll("[data-tkeys]").forEach(function(box){ fillTicketChips(box,box.dataset.tkeys.split(",")); });
+  }
 
   /* daily brief pinned by the reply-brief skill */
   function briefHidden(id){ try{ return localStorage.getItem("rq-brief-hide")===id; }catch(e){ return false; } }
