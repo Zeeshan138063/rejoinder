@@ -11,5 +11,5 @@ To try your changes locally in Claude Code:
 
 ```
 /plugin marketplace add ./path/to/your/clone
-/plugin install reply-agent@reply-agent
+/plugin install rejoinder@rejoinder
 ```

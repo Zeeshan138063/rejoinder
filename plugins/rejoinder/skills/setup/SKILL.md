@@ -1,11 +1,11 @@
 ---
-name: reply-setup
-description: One-time setup for the reply agent. Creates the user's config, knowledge base and Reply Queue page, learns their writing voice from their own chat messages, and schedules the hourly run. Use when the user says "/reply-setup", "set up my reply agent", "learn my voice", or wants to change working hours, VIPs or muted chats.
+name: setup
+description: One-time setup for Rejoinder. Creates the user's config, knowledge base and Reply Queue page, learns their writing voice from their own chat messages, and schedules the hourly run. Use when the user says "/rejoinder:setup", "set up Rejoinder", "learn my voice", or wants to change working hours, VIPs or muted chats.
 ---
 
-# Reply agent setup
+# Rejoinder setup
 
-Set up a personal reply agent: it watches `~~chat` during working hours, skips noise, and drafts replies in the user's voice into a Reply Queue page. It never sends anything. Run the steps in order, and keep each message to the user short and plain.
+Set up Rejoinder, a personal reply assistant: it watches `~~chat` during working hours, skips noise, and drafts replies in the user's voice into a Reply Queue page. It never sends anything. Run the steps in order, and keep each message to the user short and plain.
 
 If `config.md` already exists in the agent folder, treat the request as a change: read it, ask only about what the user wants to change, update it, and stop.
 
@@ -52,7 +52,7 @@ Load the `artifact-capabilities` skill first. Then publish `${CLAUDE_PLUGIN_ROOT
 - `capabilities: {"db": {"rules": [{"path": "", "read": "admin", "write": "admin"}]}, "user": {}}`, so that only the owner and their editors can read the drafts.
 - If the tracker is **Jira**, add the live Jira tab: include `"mcp": {"servers": [{"server": "<Atlassian connector display name, e.g. Atlassian MCP>", "tools": ["searchJiraIssuesUsingJql", "executeRead", "transitionJiraIssue", "addOrEditJiraIssueComment"]}]}` and `"sample": {}` in the same capabilities object. Then write `meta/jira` = `{cloudId, site: "https://<site>.atlassian.net", server: "<same display name>"}` with `ArtifactData`. The tab lists the user's open tickets and answers plain-English questions ("how many closed today", "bugs assigned to Sam") by turning them into JQL. Moving a ticket's status or posting a comment from the tab always needs a second, confirming click.
 
-Save the artifact URL in `config.md` as `queue_url`. Write `meta/run` with `{lastRunAt: <now minus 24h>}` through the `ArtifactData` tool, so the first run has a start point. Then seed the cloud copy of the knowledge base (`kb/core`, `kb/voice`, `kb/people`, as described in the `reply-drafts` skill), so hourly runs still have context while the computer sleeps.
+Save the artifact URL in `config.md` as `queue_url`. Write `meta/run` with `{lastRunAt: <now minus 24h>}` through the `ArtifactData` tool, so the first run has a start point. Then seed the cloud copy of the knowledge base (`kb/core`, `kb/voice`, `kb/people`, as described in the `rejoinder:drafts` skill), so hourly runs still have context while the computer sleeps.
 
 ## 6. Schedule the hourly run
 
@@ -61,11 +61,11 @@ Use the scheduled-task tool (`create_trigger`):
 - **Schedule:** cron in the user's time zone, at a minute other than :00, every hour across their working hours and days. Example: `CRON_TZ=Europe/London 7 9-18 * * 1-5`.
 - **Computer:** set `requires_local_device: true` if the agent folder is on their computer.
 - **Notifications:** turn on push notifications.
-- **Prompt:** "Run the `reply-drafts` skill for <name>, using the config at <agent folder>/config.md. Drafts only; never send, post or edit anything in chat, email or the tracker."
+- **Prompt:** "Run the `rejoinder:drafts` skill for <name>, using the config at <agent folder>/config.md. Drafts only; never send, post or edit anything in chat, email or the tracker."
 
 Tell the user the first run time, and how to pause the task or change it.
 
-Offer two more scheduled tasks for the `reply-brief` skill, and create them only if the user agrees:
+Offer two more scheduled tasks for the `rejoinder:brief` skill, and create them only if the user agrees:
 
 - **Morning brief:** about 30 minutes after their working day starts
 - **End-of-day wrap:** about 30 minutes before it ends
@@ -74,11 +74,11 @@ Use the same computer setting and push notifications as the hourly run.
 
 ## 7. First run and hand-off
 
-Run the `reply-drafts` skill once now, so the queue has real drafts. Then tell the user, in 3–5 lines:
+Run the `rejoinder:drafts` skill once now, so the queue has real drafts. Then tell the user, in 3–5 lines:
 
 - where the queue is
-- when the next run is
-- that `/reply-drafts` runs it on demand
+- when the next runs are: hourly drafts, and the morning brief and day wrap if scheduled
+- that `/rejoinder:drafts` runs it on demand
 - that editing a draft before sending teaches the agent their voice
 
 ## Rules

@@ -1,9 +1,9 @@
 # config.md template
 
-`/reply-setup` writes this file to the agent folder, and every run reads it. Keep the headings exactly as below; the values are examples.
+`/rejoinder:setup` writes this file to the agent folder, and every run reads it. Keep the headings exactly as below; the values are examples.
 
 ```markdown
-# Reply agent config
+# Rejoinder config
 
 ## Me
 - name: Alex Rivera
@@ -23,7 +23,7 @@
 
 ## Queue
 - queue_url: https://claude.ai/artifact/<id>
-- agent_folder: ~/Documents/reply-agent
+- agent_folder: ~/Documents/rejoinder
 
 ## Priority
 - vips: Sam Lee (manager), Priya Shah (PM), Jordan Kim (CTO), People team

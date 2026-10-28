@@ -1,6 +1,6 @@
 ---
-name: reply-drafts
-description: Checks the user's work chat for messages that need them since the last run, skips noise, and drafts replies in their voice with context into their Reply Queue. Use for the scheduled hourly run, or when the user says "/reply-drafts", "check my chat", "any replies pending", "draft my replies" or "what needs me".
+name: drafts
+description: Checks the user's work chat for messages that need them since the last run, skips noise, and drafts replies in their voice with context into their Reply Queue. Use for the scheduled hourly run, or when the user says "/rejoinder:drafts", "check my chat", "any replies pending", "draft my replies" or "what needs me".
 ---
 
 # Reply drafts
@@ -11,7 +11,7 @@ Draft replies to `~~chat` messages that need the user, in their voice, with cont
 
 ## 0. Load
 
-Read `config.md` from the agent folder (the scheduled prompt names it). If it is missing, tell the user to run `/reply-setup` and stop. From it take:
+Read `config.md` from the agent folder (the scheduled prompt names it). If it is missing, tell the user to run `/rejoinder:setup` and stop. From it take:
 
 - the user: name, email, chat user id, time zone
 - the tools: chat, tracker, tracker site

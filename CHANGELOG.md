@@ -2,8 +2,11 @@
 
 ## 0.2.0
 
+### Renamed
+- **Reply Agent is now Rejoinder.** The repo is `Zeeshan138063/rejoinder`, the plugin is `rejoinder`, and the skills are `/rejoinder:setup`, `/rejoinder:drafts` and `/rejoinder:brief`. GitHub redirects the old repo URL. If you installed the old plugin, see *Upgrading from Reply Agent* in the README.
+
 ### Added
-- **Morning brief and end-of-day wrap.** The new `/reply-brief` skill pins them to the top of the Reply Queue: what to reply to first, meetings, due tickets, promises, and a standup draft.
+- **Morning brief and end-of-day wrap.** The new `/rejoinder:brief` skill pins them to the top of the Reply Queue: what to reply to first, meetings, due tickets, promises, and a standup draft.
 - **Jira tab.** Your open tickets, live, with priority, type, status, epic, due date and stale flags. You can filter, sort and group them.
 - **Ask Jira.** Plain-English questions are turned into JQL. Results show To do / In progress / Done cards, a per-assignee chart and filters (My tasks, type, priority, overdue, project).
 - **Jira quick actions.** Move a ticket's status or comment on it from the tab. Both need a confirm click.
@@ -25,4 +28,4 @@
 - Sent and closed cards are removed after 30 days, so the queue stays fast.
 
 ## 0.1.0
-- First public release: `/reply-setup` and `/reply-drafts` skills, plus the Reply Queue page with Send in Teams, quick replies, snooze and mark sent.
+- First public release, as **Reply Agent**: `/reply-setup` and `/reply-drafts` skills, plus the Reply Queue page with Send in Teams, quick replies, snooze and mark sent.

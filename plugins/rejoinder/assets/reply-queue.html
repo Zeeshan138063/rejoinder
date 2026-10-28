@@ -1,4 +1,4 @@
-<title>Reply Queue</title>
+<title>Rejoinder · Reply Queue</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -770,7 +770,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
         if(state.q||state.filter!=="all") list.appendChild(empty("No matches","Try another search or filter."));
         else if(state.tab==="open"){
           var caught=state.drafts.length>0;
-          list.appendChild(empty(caught?"All caught up":"No drafts yet",caught?"Nice work. New drafts land here every hour, urgent ones first.":"The agent drops reply drafts here every hour, urgent ones first. Run /reply-drafts in Claude for an instant check.",caught));
+          list.appendChild(empty(caught?"All caught up":"No drafts yet",caught?"Nice work. New drafts land here every hour, urgent ones first.":"The agent drops reply drafts here every hour, urgent ones first. Run /rejoinder:drafts in Claude for an instant check.",caught));
           if(caught && lastOpen>0) confetti();
         }
         else list.appendChild(empty(state.tab==="snoozed"?"Nothing snoozed":"Nothing sent yet","Items move here as you work through the queue."));
@@ -1291,7 +1291,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     box.open=wasOpen||open.length<=4;
   }
 
-  /* daily brief pinned by the reply-brief skill */
+  /* daily brief pinned by the rejoinder:brief skill */
   function briefHidden(id){ try{ return localStorage.getItem("rq-brief-hide")===id; }catch(e){ return false; } }
   function renderBrief(){
     var box=$("brief"), b=state.brief;

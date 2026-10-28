@@ -1,4 +1,4 @@
-// Structural checks for the Reply Agent plugin. Runs in CI on every push and pull request.
+// Structural checks for the Rejoinder plugin. Runs in CI on every push and pull request.
 // No network, no secrets: JSON manifests, skill frontmatter, and the Reply Queue page's script.
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";

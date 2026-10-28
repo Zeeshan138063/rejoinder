@@ -1,15 +1,15 @@
 {
-  "name": "reply-agent",
+  "name": "rejoinder",
   "owner": {
     "name": "Zeeshan Muhammad",
     "url": "https://github.com/Zeeshan138063"
   },
   "plugins": [
     {
-      "name": "reply-agent",
-      "source": "./plugins/reply-agent",
+      "name": "rejoinder",
+      "source": "./plugins/rejoinder",
       "description": "Watches your work chat, skips the noise, and drafts replies in your voice for you to review and send."
     }
   ],
-  "description": "Reply Agent: drafts replies to your work chat in your own voice, with context. You review and send."
+  "description": "Rejoinder: drafts replies to your work chat in your own voice, with context. You review and send."
 }

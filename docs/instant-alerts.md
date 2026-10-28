@@ -1,6 +1,6 @@
 # Instant alerts for VIP and urgent messages
 
-Reply Agent checks your chat once an hour, because scheduled tasks can't run more often. For the few messages that can't wait an hour, such as your manager, the CTO, a client-facing PM, or anything that says "prod is down", add one of the small automations below. It sends a phone notification **the moment** the message arrives. The full draft still lands in your Reply Queue on the next hourly run, or straight away if you run `/reply-drafts`.
+Rejoinder checks your chat once an hour, because scheduled tasks can't run more often. For the few messages that can't wait an hour, such as your manager, the CTO, a client-facing PM, or anything that says "prod is down", add one of the small automations below. It sends a phone notification **the moment** the message arrives. The full draft still lands in your Reply Queue on the next hourly run, or straight away if you run `/rejoinder:drafts`.
 
 The automation never reads more than the one message, never replies, and stores nothing.
 
@@ -16,7 +16,7 @@ The automation never reads more than the one message, never replies, and stores 
 ### Flow 1: chats (1:1 and group)
 
 1. Go to **make.powerautomate.com**, then **Create**, then **Automated cloud flow**.
-2. Name it `Reply Agent – VIP alert (chats)`.
+2. Name it `Rejoinder – VIP alert (chats)`.
 3. **Trigger:** Microsoft Teams → **When a new chat message is added**.
 4. Add **Get message details** (Microsoft Teams):
    - Message: the *Message id* from the trigger

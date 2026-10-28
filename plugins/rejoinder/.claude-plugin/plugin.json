@@ -1,13 +1,13 @@
 {
-  "name": "reply-agent",
+  "name": "rejoinder",
   "version": "0.2.0",
   "description": "An always-on assistant that watches your work chat during working hours, filters the noise, and drafts replies in your own voice with context from your chats and tracker. You review and send; it never sends on its own.",
   "author": {
     "name": "Zeeshan Muhammad",
     "url": "https://github.com/Zeeshan138063"
   },
-  "homepage": "https://github.com/Zeeshan138063/reply-agent",
-  "repository": "https://github.com/Zeeshan138063/reply-agent",
+  "homepage": "https://github.com/Zeeshan138063/rejoinder",
+  "repository": "https://github.com/Zeeshan138063/rejoinder",
   "license": "MIT",
   "keywords": [
     "chat",

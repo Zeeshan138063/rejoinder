@@ -1,6 +1,6 @@
 ---
-name: reply-brief
-description: Writes the user's morning brief or end-of-day wrap from their Reply Queue, chat, calendar and tracker, and pins it to the top of the Reply Queue page. Use for the scheduled morning and evening runs, or when the user says "/reply-brief", "morning brief", "what's on today", "end of day wrap" or "wrap up my day".
+name: brief
+description: Writes the user's morning brief or end-of-day wrap from their Reply Queue, chat, calendar and tracker, and pins it to the top of the Reply Queue page. Use for the scheduled morning and evening runs, or when the user says "/rejoinder:brief", "morning brief", "what's on today", "end of day wrap" or "wrap up my day".
 ---
 
 # Reply brief
@@ -27,7 +27,7 @@ Write a short brief and pin it to the top of the user's Reply Queue. **Read-only
 
 **Tracker** (`~~project tracker`, if configured):
 
-- Use **only** plain JQL search (`searchJiraIssuesUsingJql`), never cross-product search; see the credit guard in `reply-drafts`.
+- Use **only** plain JQL search (`searchJiraIssuesUsingJql`), never cross-product search; see the credit guard in `rejoinder:drafts`.
 - One query: `assignee = currentUser() AND statusCategory != Done AND (duedate <= endOfDay() OR priority in (Highest, High)) ORDER BY duedate ASC, priority DESC`.
 - Evening also runs: `assignee = currentUser() AND updated >= startOfDay() ORDER BY updated DESC`.
 

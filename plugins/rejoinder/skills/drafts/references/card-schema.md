@@ -1,6 +1,6 @@
 # Reply Queue data
 
-The Reply Queue page (`assets/reply-queue.html`) reads these documents live from its artifact database. The `reply-drafts` skill writes them with the `ArtifactData` tool.
+The Reply Queue page (`assets/reply-queue.html`) reads these documents live from its artifact database. The `rejoinder:drafts` skill writes them with the `ArtifactData` tool.
 
 ## drafts/<message id>
 

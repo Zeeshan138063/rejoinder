@@ -2,7 +2,7 @@
 
 ## How tool references work
 
-The skills in this plugin talk about tools by category, written with a `~~` prefix, for example `~~chat` or `~~project tracker`. When you run `/reply-setup`, you choose the actual tool and it is saved in your `config.md`. Every later run reads that file and uses the tool you picked.
+The skills in this plugin talk about tools by category, written with a `~~` prefix, for example `~~chat` or `~~project tracker`. When you run `/rejoinder:setup`, you choose the actual tool and it is saved in your `config.md`. Every later run reads that file and uses the tool you picked.
 
 ## Connectors for this plugin
 
