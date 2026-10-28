@@ -21,7 +21,17 @@ Read `config.md` from the agent folder (the scheduled prompt names it). If it is
 
 Also read `CLAUDE.md`, `memory/voice.md` and `memory/glossary.md`.
 
-If the agent folder can't be reached (computer offline), keep going with `config.md` values cached in `meta/run` (`configCache`). Set each card's `context` to say the knowledge base was offline.
+**Cloud copy of the knowledge base.** The queue keeps a copy of the essentials so a run can draft with full context while the computer sleeps:
+
+- `kb/core`: `{text, updatedAt}`, the text of `CLAUDE.md`
+- `kb/voice`: `{text, updatedAt}`, the text of `memory/voice.md`
+- `kb/people`: `{text, updatedAt}`, a one-line summary per person from `memory/people/`
+
+What to do each run:
+
+- **Agent folder reachable:** read from the folder as usual. If any of `CLAUDE.md`, `voice.md` or the people files changed since the matching `kb/*` doc's `updatedAt`, rewrite that doc. Do this at most once a day per doc, keep each doc under 60 KB, and never copy secrets.
+- **Agent folder unreachable** (computer offline): read the three `kb/*` docs, plus `config.md` values cached in `meta/run` (`configCache`). Draft exactly as you would from the folder. Mention "knowledge base: cloud copy" in `context` only if a fact may be stale.
+- **Neither available:** draft from this skill alone, and say so in `context`.
 
 ## 1. Since when
 
@@ -78,6 +88,7 @@ Make one `ArtifactData` `batch` of up to 50 writes to `queue_url`:
 - New `drafts/<message id>` documents in the shape given in `references/card-schema.md`. These are creates, so use no `if_version`.
 - `meta/digest`: `{runAt, items:[{sender, chat, text, at}]}`, with one line for each fyi item.
 - `meta/run`: `{lastRunAt: runAt, scanned, skipped, drafted, configCache}`, pinned with the `if_version` you read in step 1.
+- **Clean-up:** in the same batch, delete `drafts/*` docs whose `status` is `sent` or `done` and whose `doneAt` (or `updatedAt`) is more than 30 days old, at most 50 per run. Never delete `open` or `snoozed` cards. This keeps the queue fast and far below its 25,000-document limit.
 
 ## 8. Learn and track
 
