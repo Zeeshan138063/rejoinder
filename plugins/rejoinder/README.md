@@ -25,6 +25,10 @@ In Claude Code these show as `/rejoinder:setup` and `/rejoinder:drafts`.
 
 Setup creates these schedules in your own time zone; change them any time by asking Claude.
 
+## Open the Reply Queue
+
+Setup gives you a link to your private Reply Queue page and saves it in `config.md` as `queue_url`. You can also ask Claude to "open my Reply Queue", pin it to your claude.ai sidebar, or open the link on your phone. See [Open the Reply Queue](../../README.md#open-the-reply-queue).
+
 ## Requirements
 
 - A chat connector (Microsoft Teams via Microsoft 365, or Slack).

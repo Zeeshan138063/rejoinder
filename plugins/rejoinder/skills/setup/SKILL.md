@@ -52,7 +52,7 @@ Load the `artifact-capabilities` skill first. Then publish `${CLAUDE_PLUGIN_ROOT
 - `capabilities: {"db": {"rules": [{"path": "", "read": "admin", "write": "admin"}]}, "user": {}}`, so that only the owner and their editors can read the drafts.
 - If the tracker is **Jira**, add the live Jira tab: include `"mcp": {"servers": [{"server": "<Atlassian connector display name, e.g. Atlassian MCP>", "tools": ["searchJiraIssuesUsingJql", "executeRead", "transitionJiraIssue", "addOrEditJiraIssueComment"]}]}` and `"sample": {}` in the same capabilities object. Then write `meta/jira` = `{cloudId, site: "https://<site>.atlassian.net", server: "<same display name>"}` with `ArtifactData`. The tab lists the user's open tickets and answers plain-English questions ("how many closed today", "bugs assigned to Sam") by turning them into JQL. Moving a ticket's status or posting a comment from the tab always needs a second, confirming click.
 
-Save the artifact URL in `config.md` as `queue_url`. Write `meta/run` with `{lastRunAt: <now minus 24h>}` through the `ArtifactData` tool, so the first run has a start point. Then seed the cloud copy of the knowledge base (`kb/core`, `kb/voice`, `kb/people`, as described in the `rejoinder:drafts` skill), so hourly runs still have context while the computer sleeps.
+Save the artifact URL in `config.md` as `queue_url`. Offer to pin it to the user's claude.ai sidebar and pin it only if they say yes. Write `meta/run` with `{lastRunAt: <now minus 24h>}` through the `ArtifactData` tool, so the first run has a start point. Then seed the cloud copy of the knowledge base (`kb/core`, `kb/voice`, `kb/people`, as described in the `rejoinder:drafts` skill), so hourly runs still have context while the computer sleeps.
 
 ## 6. Schedule the hourly run
 
@@ -76,7 +76,7 @@ Use the same computer setting and push notifications as the hourly run.
 
 Run the `rejoinder:drafts` skill once now, so the queue has real drafts. Then tell the user, in 3–5 lines:
 
-- where the queue is
+- where the queue is: its link, and that saying "open my Reply Queue" opens it any time
 - when the next runs are: hourly drafts, and the morning brief and day wrap if scheduled
 - that `/rejoinder:drafts` runs it on demand
 - that editing a draft before sending teaches the agent their voice

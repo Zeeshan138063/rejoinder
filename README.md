@@ -142,7 +142,7 @@ It will:
 2. Read the last 14 days of your chat to learn who you work with, which chats are noise, and what is still open.
 3. Learn your voice from messages **you** wrote, and show you a summary to confirm.
 4. Create your agent folder: config, short working memory, people, chats, projects, voice and tasks.
-5. Publish your private Reply Queue page.
+5. Publish your private Reply Queue page and give you its link (see [Open the Reply Queue](#open-the-reply-queue)).
 6. Schedule the hourly drafts, and offer the morning brief and end-of-day wrap.
 7. Run once, so you have real drafts straight away.
 
@@ -153,6 +153,29 @@ It will:
 | `/rejoinder:setup` | First-time setup, or changing hours, VIPs and muted chats |
 | `/rejoinder:drafts` | Check chat and draft replies now |
 | `/rejoinder:brief` | Write the morning brief or day wrap now |
+
+## Open the Reply Queue
+
+The Reply Queue is a private web page on claude.ai that setup creates for you. Your drafts, the brief, the PR queue, Insights and the Jira tab all live there. To open it, use any of these:
+
+- **The link.** At the end of `/rejoinder:setup`, Claude shows a card titled **Reply Queue** with its link. Bookmark it. The link is also saved in your agent folder's `config.md` as `queue_url`.
+- **Ask Claude.** In Cowork or Claude Code, say "open my Reply Queue" and Claude opens it.
+- **The sidebar.** Ask Claude to "pin my Reply Queue" and it stays in your claude.ai sidebar.
+- **Your artifacts list.** Find **Reply Queue** in your artifacts on claude.ai.
+- **On your phone.** Open the same link in the Claude app or a mobile browser where you're signed in to Claude. The page works on small screens, and the phone notifications from scheduled runs lead you to it.
+
+Only you can open it, plus anyone you add as an editor. The page needs no install and updates live: new drafts appear while it's open.
+
+**Getting around**
+
+| Where | What's there |
+| --- | --- |
+| Top of the page | Today's progress, the pinned morning brief or day wrap, search, the light/dark toggle, and `?` for keyboard shortcuts |
+| **To reply** | Drafts sorted urgent → quick → normal. Edit, then **Send in Teams** or **Copy & open**, and **Mark sent** |
+| **Snoozed** / **Sent** | Drafts for later, and what you sent. **Insights** sit at the top of Sent |
+| **Jira** | Shown once a tracker is set up: your open tickets, **Ask Jira**, **Write my standup**, and Move / Comment actions behind a confirm click |
+
+Keyboard: `j`/`k` next/previous draft, `e` edit, `s` send, `c` copy, `d` mark sent, `z` snooze 1 hour, `/` search, `1`–`4` switch tabs, `a` Ask Jira, `r` refresh Jira, `?` show all shortcuts.
 
 ## Configure
 
