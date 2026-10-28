@@ -11,6 +11,7 @@
   --accent:#2f5bd3; --accent-2:#5b7ff0; --accent-ink:#ffffff; --accent-soft:#e8eefc;
   --urgent:#c2412d; --urgent-soft:#fbecea; --quick:#9a6700; --quick-soft:#fbf3e0; --ok:#1f7a4d; --ok-soft:#e5f4ec;
   --teams:#5059c9; --slack:#4a154b; --discord:#5865f2; --gchat:#188038; --generic:#5f6b7a;
+  --orange:#c75a1c; --orange-soft:#fcece2; --epic:#6e4fd1; --epic-soft:#efeafd;
   --shadow:0 1px 2px rgba(18,21,26,.04),0 6px 24px rgba(18,21,26,.06);
   --shadow-lift:0 2px 4px rgba(18,21,26,.05),0 14px 36px rgba(18,21,26,.10);
   --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -23,6 +24,7 @@
   --accent:#7d9cf2; --accent-2:#a3b9f7; --accent-ink:#0d0f13; --accent-soft:#1c253f;
   --urgent:#f08a78; --urgent-soft:#3a201c; --quick:#e5b55c; --quick-soft:#33291a; --ok:#6fcf9a; --ok-soft:#163026;
   --teams:#8b93f0; --slack:#d39bd4; --discord:#8f99f7; --gchat:#6fcf8a; --generic:#9aa4b2;
+  --orange:#f2a46e; --orange-soft:#3a2618; --epic:#b5a0f5; --epic-soft:#2a2242;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 26px rgba(0,0,0,.28); --shadow-lift:0 2px 6px rgba(0,0,0,.4),0 16px 40px rgba(0,0,0,.4); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0d0f13; --bg-glow:#161d33; --surface:#161920; --surface-2:#1d2129; --ink:#e9ebef; --ink-2:#aab1bd; --ink-3:#7c8492;
@@ -30,6 +32,7 @@
   --accent:#7d9cf2; --accent-2:#a3b9f7; --accent-ink:#0d0f13; --accent-soft:#1c253f;
   --urgent:#f08a78; --urgent-soft:#3a201c; --quick:#e5b55c; --quick-soft:#33291a; --ok:#6fcf9a; --ok-soft:#163026;
   --teams:#8b93f0; --slack:#d39bd4; --discord:#8f99f7; --gchat:#6fcf8a; --generic:#9aa4b2;
+  --orange:#f2a46e; --orange-soft:#3a2618; --epic:#b5a0f5; --epic-soft:#2a2242;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 26px rgba(0,0,0,.28); --shadow-lift:0 2px 6px rgba(0,0,0,.4),0 16px 40px rgba(0,0,0,.4); color-scheme:dark}
 
 [hidden]{display:none!important}
@@ -153,6 +156,91 @@ kbd{font:11px var(--mono);color:var(--ink-3);border:1px solid var(--line-2);bord
 .ripple{position:absolute;border-radius:50%;background:currentColor;opacity:.25;transform:scale(0);pointer-events:none}
 .hint{display:block;font-size:12px;color:var(--ink-3);padding:0 12px 10px;background:var(--surface)}
 
+
+/* jira */
+.jira{display:flex;flex-direction:column;gap:12px}
+.jstats{display:flex;gap:6px;flex-wrap:wrap}
+.jstat{appearance:none;display:inline-flex;align-items:baseline;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font:500 12.5px var(--sans);border-radius:10px;padding:6px 10px;cursor:pointer;transition:border-color .15s,background .15s}
+.jstat b{font:600 15px var(--sans);color:var(--ink);font-variant-numeric:tabular-nums}
+.jstat.red b{color:var(--urgent)}.jstat.amber b{color:var(--quick)}.jstat.blue b{color:var(--accent)}
+.jstat[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.jstat[aria-pressed="true"] b{color:var(--surface)}
+.jbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.jbar .search{flex:1 1 220px}
+.sel{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 13px var(--sans);border-radius:10px;padding:8px 28px 8px 10px;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);background-position:calc(100% - 15px) 52%,calc(100% - 10px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+.jfresh{display:flex;align-items:center;gap:8px;font:12px var(--mono);color:var(--ink-3);margin-left:auto}
+.jfresh .iconbtn{width:30px;height:30px}
+.jfresh .iconbtn.spin svg.i{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.jgroup{display:flex;flex-direction:column;gap:8px}
+.jgh{display:flex;align-items:center;gap:8px;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);padding:6px 2px 0}
+.jgh .count{text-transform:none}
+.tk{position:relative;display:grid;grid-template-columns:1fr auto;gap:8px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:12px 14px 12px 16px;min-width:0;transition:box-shadow .2s var(--ease),transform .2s var(--ease),border-color .2s}
+.tk:hover{box-shadow:var(--shadow-lift);transform:translateY(-1px)}
+.tk::before{content:"";position:absolute;left:-1px;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--pc,var(--line-2))}
+.tk.enter{animation:rise .45s var(--ease) both;animation-delay:var(--d,0ms)}
+.tk-main{min-width:0;display:flex;flex-direction:column;gap:6px}
+.tk-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.tk-key{font:600 12.5px var(--mono);color:var(--accent);text-decoration:none;white-space:nowrap}
+.tk-key:hover{text-decoration:underline}
+.ttype{display:inline-flex;align-items:center;gap:4px;font:500 11.5px var(--sans);color:var(--tc,var(--ink-2))}
+.ttype svg.i{width:14px;height:14px;stroke-width:2}
+.st{font:600 10.5px var(--mono);letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.st.indeterminate{background:var(--accent-soft);color:var(--accent)}
+.st.done{background:var(--ok-soft);color:var(--ok)}
+.pri{display:inline-flex;align-items:center;gap:4px;font:600 11px var(--sans);padding:2px 7px;border-radius:6px;white-space:nowrap}
+.pri svg.i{width:12px;height:12px;stroke-width:2.4}
+.pri.p0{background:var(--urgent-soft);color:var(--urgent)}.pri.p1{background:var(--orange-soft);color:var(--orange)}.pri.p2{background:var(--quick-soft);color:var(--quick)}.pri.p3{background:var(--accent-soft);color:var(--accent)}.pri.p4{background:var(--surface-2);color:var(--ink-3)}
+.tk-sum{font-size:14.5px;font-weight:500;line-height:1.4;color:var(--ink);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tk-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--ink-3)}
+.tag{display:inline-flex;align-items:center;gap:4px;font:500 11.5px var(--sans);padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag svg.i{width:11px;height:11px}
+.tag.epic{border-color:transparent;background:var(--epic-soft);color:var(--epic)}
+.tag.teams{border-color:transparent;background:var(--accent-soft);color:var(--accent)}
+.tag.due-over{border-color:transparent;background:var(--urgent-soft);color:var(--urgent)}
+.tag.due-soon{border-color:transparent;background:var(--quick-soft);color:var(--quick)}
+.tag.stale{border-style:dashed;color:var(--quick)}
+.tk-act{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.tk-act .btn{padding:6px 9px}
+.notice{display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;color:var(--ink-2)}
+.notice strong{color:var(--ink)}
+@media (max-width:560px){.tk{grid-template-columns:1fr}.tk-act{flex-direction:row;justify-content:flex-start}.jfresh{margin-left:0}.seg button{font-size:12.5px;padding:7px 4px;gap:5px}}
+
+.ask{display:flex;flex-direction:column;gap:10px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 9%,var(--surface)),var(--surface) 60%);border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.ask-row{display:flex;gap:8px;align-items:center}
+.ask-in{flex:1;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line-2);border-radius:12px;padding:0 12px;min-width:0}
+.ask-in:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.ask-in svg.i{color:var(--accent)}
+.ask-in input{flex:1;min-width:0;border:0;outline:0;background:none;color:var(--ink);font:14.5px var(--sans);padding:10px 0}
+.ask-sug{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.ask-sug::-webkit-scrollbar{display:none}
+.ask-sug button{appearance:none;flex:none;border:1px dashed var(--line-2);background:var(--surface);color:var(--ink-2);font:500 12.5px var(--sans);border-radius:999px;padding:4px 10px;cursor:pointer}
+.ask-sug button:hover{border-color:var(--accent);color:var(--accent)}
+.ares{display:flex;flex-direction:column;gap:12px}
+.ahead{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.ahead .big{font:600 34px/1 var(--sans);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ahead .ttl{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.ahead .ttl b{font-size:15px}
+.ahead .ttl span{font-size:12.5px;color:var(--ink-3)}
+.acards{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.acard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+.acard b{font:600 20px var(--sans);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.acard span{font-size:12px;color:var(--ink-3)}
+.acard i{display:block;height:4px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.acard i u{display:block;height:100%;border-radius:2px;background:var(--bc,var(--accent));text-decoration:none;transition:width .8s var(--ease)}
+.who-bars{display:flex;flex-direction:column;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.who-bars h3{margin:0 0 2px;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.wb{display:grid;grid-template-columns:minmax(90px,160px) 1fr auto;gap:10px;align-items:center;font-size:13px}
+.wb span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb i{display:flex;height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.wb i u{display:block;height:100%;text-decoration:none}
+.wb b{font:500 12px var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.jql{display:flex;align-items:center;gap:8px;font:12px var(--mono);color:var(--ink-3);background:var(--surface-2);border-radius:9px;padding:6px 6px 6px 10px;min-width:0}
+.jql code{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thinking{display:flex;align-items:center;gap:10px;color:var(--ink-2);font-size:13.5px;padding:6px 2px}
+.dots{display:inline-flex;gap:4px}.dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.3}
+@media (prefers-reduced-motion: no-preference){.dots i{animation:bob 1s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}@keyframes bob{50%{opacity:1;transform:translateY(-3px)}}}
+
 /* empty + skeleton */
 .empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;color:var(--ink-3);padding:40px 20px;border:1px dashed var(--line-2);border-radius:18px;background:color-mix(in srgb,var(--surface) 60%,transparent)}
 .empty strong{color:var(--ink);font-size:16px;font-weight:600}
@@ -243,7 +331,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
   </section>
 
   <div class="controls">
-    <div class="searchrow">
+    <div class="searchrow" id="d-search">
       <label class="search" for="q"><span class="sr">Search drafts</span><span id="q-ic"></span><input id="q" type="search" placeholder="Search people, chats, messages" autocomplete="off"><kbd>/</kbd></label>
     </div>
     <div class="filters" id="filters" role="toolbar" aria-label="Filter"></div>
@@ -252,10 +340,12 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       <button role="tab" id="tab-open" aria-selected="true">To reply <span class="count" id="c-open">0</span></button>
       <button role="tab" id="tab-snoozed" aria-selected="false">Snoozed <span class="count" id="c-snoozed">0</span></button>
       <button role="tab" id="tab-done" aria-selected="false">Sent <span class="count" id="c-done">0</span></button>
+      <button role="tab" id="tab-jira" aria-selected="false" hidden>Jira <span class="count" id="c-jira">·</span></button>
     </div>
   </div>
 
   <div class="list" id="list" aria-live="polite"></div>
+  <section class="jira" id="jira" hidden aria-label="My Jira tickets"></section>
   <details class="digest" id="digest" hidden>
     <summary id="digest-title">FYI from the last run</summary>
     <ul class="fyi" id="fyi"></ul>
@@ -273,7 +363,9 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       <dt><kbd>d</kbd></dt><dd>Mark sent</dd>
       <dt><kbd>z</kbd></dt><dd>Snooze 1 hour</dd>
       <dt><kbd>/</kbd></dt><dd>Search</dd>
-      <dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>To reply / Snoozed / Sent</dd>
+      <dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd></dt><dd>To reply / Snoozed / Sent / Jira</dd>
+      <dt><kbd>r</kbd></dt><dd>Refresh Jira</dd>
+      <dt><kbd>a</kbd></dt><dd>Ask Jira a question</dd>
       <dt><kbd>Esc</kbd></dt><dd>Close / leave the reply box</dd>
     </dl>
   </div>
@@ -307,7 +399,22 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     inbox:'<path d="M3 13h5l2 3h4l2-3h5"/><path d="M5 5h14l2 8v6H3v-6z"/>',
     search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
     key:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
-    chev:'<path d="m6 9 6 6 6-6"/>'
+    chev:'<path d="m6 9 6 6 6-6"/>',
+    bug:'<rect x="8" y="6" width="8" height="13" rx="4"/><path d="M12 10v9M4 13h4M16 13h4M5 7l3 2M19 7l-3 2M5 19l3-2M19 19l-3-2M10 4l1 2M14 4l-1 2"/>',
+    story:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+    task:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+    sub:'<path d="M6 4v10a3 3 0 0 0 3 3h9"/><path d="m15 14 3 3-3 3"/>',
+    dot:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/>',
+    up:'<path d="m6 15 6-6 6 6"/>',
+    up2:'<path d="m6 13 6-6 6 6M6 19l6-6 6 6"/>',
+    down:'<path d="m6 9 6 6 6-6"/>',
+    eq:'<path d="M6 10h12M6 14h12"/>',
+    refresh:'<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
+    cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+    tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/>',
+    person:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+    spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+    back:'<path d="M15 18l-6-6 6-6"/>'
   };
   function icon(n){ var s=document.createElementNS("http://www.w3.org/2000/svg","svg"); s.setAttribute("viewBox","0 0 24 24"); s.setAttribute("class","i"); s.setAttribute("aria-hidden","true"); s.innerHTML=ICONS[n]||""; return s; }
   var PLATFORMS={teams:{name:"Teams",color:"var(--teams)"},slack:{name:"Slack",color:"var(--slack)"},discord:{name:"Discord",color:"var(--discord)"},gchat:{name:"Google Chat",color:"var(--gchat)"}};
@@ -523,7 +630,8 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     var oldest=g.open.reduce(function(m,d){ return d.receivedAt?Math.max(m,mins(d.receivedAt)):m; },0);
     $("c-open").textContent=g.open.length; $("c-open").className="count"+(urgent?" hot":"");
     $("c-snoozed").textContent=g.snoozed.length; $("c-done").textContent=g.done.length;
-    ["open","snoozed","done"].forEach(function(t){ $("tab-"+t).setAttribute("aria-selected",String(state.tab===t)); });
+    ["open","snoozed","done","jira"].forEach(function(t){ $("tab-"+t).setAttribute("aria-selected",String(state.tab===t)); });
+    var onJ=state.tab==="jira"; $("list").hidden=onJ; $("jira").hidden=!onJ; $("d-search").hidden=onJ; $("filters").hidden=onJ;
     glide();
 
     tween($("s-wait"),g.open.length); tween($("s-urg"),urgent); tween($("s-done"),clearedToday);
@@ -532,12 +640,13 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     $("ringprog").style.strokeDashoffset=String(263.9*(1-pct/100)); tween($("ringpct"),pct,function(v){ return v+"%"; });
     var hr=new Date().getHours(), hi=hr<12?"Good morning":hr<17?"Good afternoon":"Good evening";
     $("greet").firstChild.nodeValue=hi;
-    $("greet-sub").textContent=!state.loaded?"Loading your queue":g.open.length?(urgent?urgent+" urgent, "+(g.open.length-urgent)+" more waiting on you":g.open.length+" "+(g.open.length===1?"reply":"replies")+" waiting on you"):"Nothing waiting on you";
+    $("greet-sub").textContent=!state.loaded?"Loading your queue":g.open.length?(urgent?urgent+" urgent"+(g.open.length>urgent?", "+(g.open.length-urgent)+" more":"")+" waiting on you":g.open.length+" "+(g.open.length===1?"reply":"replies")+" waiting on you"):"Nothing waiting on you";
 
     renderFilters();
 
     var list=$("list"); list.textContent="";
-    if(!state.loaded){ list.appendChild(skeleton()); }
+    if(state.tab==="jira"){ renderJira(); }
+    else if(!state.loaded){ list.appendChild(skeleton()); }
     else {
       var items=g[state.tab].filter(matches);
       if(!items.length){
@@ -560,20 +669,280 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       $("runinfo").textContent=t; $("pulse").className="pulse"+(mins(state.run.lastRunAt)>180?" idle":"");
     }
     var dg=state.digest, fyi=$("fyi");
-    if(dg && Array.isArray(dg.items) && dg.items.length){
+    if(state.tab!=="jira" && dg && Array.isArray(dg.items) && dg.items.length){
       $("digest").hidden=false; var st=$("digest-title"); st.textContent=""; st.appendChild(icon("info")); st.appendChild(document.createTextNode("FYI from the last run · "+dg.items.length)); var ch=icon("chev"); ch.classList.add("chev"); st.appendChild(ch);
       fyi.textContent="";
       dg.items.forEach(function(it){ var li=el("li"); li.appendChild(el("small",null,(it.sender||"")+" · "+(it.chat||""))); li.appendChild(el("span",null,it.text||"")); fyi.appendChild(li); });
     } else $("digest").hidden=true;
   }
 
+
+  /* ---------- My Jira (live, through the viewer's Atlassian connector) ---------- */
+  var JIRA={cfg:null,issues:null,err:null,loading:false,storedAt:null,q:"",proj:"all",only:"all",sort:"priority",group:"project",mcp:null,retried:false,seen:{}};
+  var PRI={Highest:0,Critical:0,Blocker:0,High:1,Major:1,Medium:2,Low:3,Minor:3,Lowest:4,Trivial:4};
+  var PRI_IC=["up2","up","eq","down","down"];
+  var JFIELDS=["summary","status","priority","issuetype","project","updated","created","duedate","reporter","labels","parent","assignee","resolutiondate"];
+  var ASK={q:"",jql:"",title:"",loading:false,stage:"",err:null,issues:null,more:false,ctl:null};
+  function jserver(){ return (JIRA.cfg && JIRA.cfg.server)||"Atlassian MCP"; }
+  function jget(i,k){ return (i.fields||{})[k]; }
+  function pri(i){ var p=jget(i,"priority"); var n=p&&p.name||"None"; return {name:n,rank:(n in PRI)?PRI[n]:5}; }
+  function typeOf(i){ var t=jget(i,"issuetype")||{}; var n=t.name||"Issue"; var low=n.toLowerCase();
+    if(t.subtask||low.indexOf("sub")===0) return {name:n,ic:"sub",c:"var(--ink-3)"};
+    if(low.indexOf("bug")>=0||low.indexOf("defect")>=0) return {name:n,ic:"bug",c:"var(--urgent)"};
+    if(low.indexOf("story")>=0||low.indexOf("feature")>=0) return {name:n,ic:"story",c:"var(--ok)"};
+    if(low.indexOf("epic")>=0) return {name:n,ic:"bolt",c:"var(--epic)"};
+    if(low.indexOf("task")>=0) return {name:n,ic:"task",c:"var(--accent)"};
+    return {name:n,ic:"dot",c:"var(--ink-2)"}; }
+  function dueInfo(i){ var d=jget(i,"duedate"); if(!d) return null; var due=new Date(d+"T23:59:59"), days=Math.floor((due-Date.now())/864e5);
+    return {d:d,days:days,over:due<Date.now(),soon:!(due<Date.now())&&days<=2}; }
+  function updDays(i){ var u=jget(i,"updated"); return u?Math.floor((Date.now()-Date.parse(u))/864e5):0; }
+  function teamsKeys(){ var set={}; state.drafts.forEach(function(d){ if(bucket(d)==="done") return; var txt=[d.message,d.context,d.draft].join(" "); (Array.isArray(d.links)?d.links:[]).forEach(function(l){ txt+=" "+(l&&l.label||"")+" "+(l&&l.url||""); }); (txt.match(/\b[A-Z][A-Z0-9]{1,9}-\d+\b/g)||[]).forEach(function(k){ set[k]=1; }); }); return set; }
+  function fmtDue(di){ if(di.over) return di.days<=-1?"overdue "+Math.abs(di.days)+"d":"due today"; if(di.days===0) return "due today"; if(di.days===1) return "due tomorrow"; try{ return "due "+new Date(di.d+"T12:00:00").toLocaleDateString(undefined,{day:"numeric",month:"short"}); }catch(e){ return "due "+di.d; } }
+
+  async function jiraSearch(jql,force,maxPages){
+    if(!JIRA.mcp){ JIRA.mcp=await window.claude.use("mcp"); }
+    if(!JIRA.mcp){ throw {code:"not_granted"}; }
+    var all=[], token=null, pages=0, stored=null, more=false;
+    do{
+      var input={cloudId:JIRA.cfg.cloudId,jql:jql,maxResults:100,fields:JFIELDS};
+      if(token) input.nextPageToken=token;
+      var res=await JIRA.mcp.callTool(jserver(),"searchJiraIssuesUsingJql",input,{cache:force?{staleTime:120000,gcTime:900000,refresh:true}:{staleTime:120000,gcTime:900000}});
+      var p=res&&res.payload; if(typeof p==="string"){ try{ p=JSON.parse(p); }catch(e){} }
+      var iss=p&&p.issues, nodes=Array.isArray(iss)?iss:(iss&&iss.nodes)||[];
+      all=all.concat(nodes.filter(function(n){ return n&&n.key; }));
+      var pi=iss&&iss.pageInfo; token=(pi&&pi.hasNextPage&&pi.endCursor)?pi.endCursor:((p&&p.nextPageToken&&!p.isLast)?p.nextPageToken:null);
+      if(res&&res.cache&&res.cache.storedAt) stored=Math.min(stored||Infinity,res.cache.storedAt);
+      pages++;
+    } while(token && pages<(maxPages||5));
+    if(token) more=true;
+    return {issues:all,stored:stored,more:more};
+  }
+
+  function looksLikeJql(q){ return /(^|\s)(project|assignee|reporter|status|statusCategory|issuetype|priority|labels|created|updated|resolved|due|duedate|sprint|text|summary)\s*(=|!=|~|>=|<=|>|<|in\b|not in\b|is\b|was\b|changed\b)/i.test(q) || /\border by\b/i.test(q); }
+  function knownPeople(){ var s={}; state.drafts.forEach(function(d){ if(d.sender) s[d.sender]=1; }); (JIRA.issues||[]).forEach(function(i){ var r=jget(i,"reporter"); if(r&&r.displayName) s[r.displayName]=1; }); delete s["Security check"]; return Object.keys(s).slice(0,60); }
+  function knownProjects(){ var s={}; (JIRA.issues||[]).forEach(function(i){ var p=jget(i,"project"); if(p) s[p.key]=p.name||p.key; }); return s; }
+  async function askJira(q){
+    q=(q||"").trim(); if(!q) return;
+    if(ASK.ctl) ASK.ctl.abort();
+    ASK={q:q,jql:"",title:"",loading:true,stage:"",err:null,issues:null,more:false,ctl:new AbortController()};
+    var my=ASK;
+    try{
+      if(looksLikeJql(q)){ my.jql=q; my.title="JQL search"; }
+      else {
+        my.stage="Turning your question into a Jira search"; renderJira();
+        var sample=await window.claude.use("sample"); if(!sample) throw {code:"sample_unavailable"};
+        var pj=knownProjects(), tz=""; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone; }catch(e){}
+        var prompt="Convert the user's question about their Jira into one JQL query for Jira Cloud.\n"+
+          "Today: "+new Date().toDateString()+". Time zone: "+tz+".\n"+
+          "Projects: "+(Object.keys(pj).map(function(k){ return k+" ("+pj[k]+")"; }).join(", ")||"unknown")+".\n"+
+          "People they work with (display names): "+(knownPeople().join(", ")||"unknown")+".\n"+
+          "Rules: 'I/me/my/mine' = currentUser(). A teammate named in the question becomes assignee = \"Full Name\" (match the closest display name above; quote it). "+
+          "'open/pending/not done' = statusCategory != Done. 'in progress' = statusCategory = \"In Progress\". 'to do' = statusCategory = \"To Do\". "+
+          "'closed/done/resolved today' = statusCategory = Done AND resolved >= startOfDay(). 'this week' = >= startOfWeek(). "+
+          "'bugs' = issuetype = Bug. 'overdue' = duedate < now() AND statusCategory != Done. 'due this week' = duedate <= endOfWeek(). "+
+          "If the question says 'my' or names nobody, scope to assignee = currentUser() unless it clearly asks about a whole project or team. Always end with an ORDER BY.\n"+
+          "Reply with JSON only: {\"jql\": string, \"title\": short headline of what is listed (max 60 chars)}.\n"+
+          "Question: "+q;
+        var out=await sample.json(prompt,{modelTier:"quick",signal:my.ctl.signal});
+        if(!out||typeof out.jql!=="string"||!out.jql.trim()) throw {code:"bad_jql",message:"Claude couldn't turn that into a Jira search."};
+        my.jql=out.jql.trim(); my.title=String(out.title||q).slice(0,80);
+      }
+      if(ASK!==my) return;
+      my.stage="Searching Jira"; renderJira();
+      var r=await jiraSearch(my.jql,false,5);
+      if(ASK!==my) return;
+      my.issues=r.issues; my.more=r.more;
+    } catch(e){ if(ASK!==my) return; if(e&&e.code==="cancelled"){ ASK={q:"",jql:"",title:"",loading:false,stage:"",err:null,issues:null,more:false,ctl:null}; renderJira(); return; } my.err=e||{code:"upstream_error"}; }
+    my.loading=false; renderJira();
+  }
+  function closeAsk(){ if(ASK.ctl) ASK.ctl.abort(); ASK={q:"",jql:"",title:"",loading:false,stage:"",err:null,issues:null,more:false,ctl:null}; renderJira(); }
+
+  function askBox(){
+    var box=el("div","ask");
+    var row=el("form","ask-row"); row.setAttribute("role","search");
+    var lab=el("label","ask-in"); lab.htmlFor="askq"; lab.appendChild(icon("spark"));
+    var inp=el("input"); inp.id="askq"; inp.type="text"; inp.autocomplete="off"; inp.placeholder="Ask Jira: how many tickets closed today?"; inp.value=ASK.q; lab.appendChild(inp); row.appendChild(lab);
+    var go=withIcon("button","btn primary","search","Ask"); go.type="submit"; go.addEventListener("pointerdown",ripple); row.appendChild(go);
+    row.addEventListener("submit",function(e){ e.preventDefault(); askJira(inp.value); });
+    box.appendChild(row);
+    var sug=el("div","ask-sug"); var mate=knownPeople().filter(function(n){ return n.indexOf("Agent")<0; })[0];
+    var S=["How many tickets were closed today?","List my assigned bugs","My tickets in progress","My overdue tickets","What did I resolve this week?","High priority bugs in my projects"];
+    if(mate) S.splice(2,0,"Bugs assigned to "+mate);
+    S.forEach(function(t){ var b=el("button",null,t); b.type="button"; b.onclick=function(){ inp.value=t; askJira(t); }; sug.appendChild(b); });
+    box.appendChild(sug);
+    return box;
+  }
+
+  function statCard(label,n,total,color){ var c=el("div","acard"); var b=el("b"); c.appendChild(b); tween(b,n); c.appendChild(el("span",null,label)); var bar=el("i"), u=el("u"); u.style.setProperty("--bc",color); u.style.width="0%"; bar.appendChild(u); c.appendChild(bar); requestAnimationFrame(function(){ requestAnimationFrame(function(){ u.style.width=(total?Math.round(n/total*100):0)+"%"; }); }); return c; }
+  function askResults(){
+    var wrap=el("div","ares");
+    var back=withIcon("button","btn ghost","back","My open tickets"); back.type="button"; back.onclick=closeAsk; back.style.alignSelf="flex-start"; wrap.appendChild(back);
+    if(ASK.loading){ var t=el("div","thinking"); var d=el("span","dots"); d.appendChild(el("i")); d.appendChild(el("i")); d.appendChild(el("i")); t.appendChild(d); t.appendChild(el("span",null,(ASK.stage||"Working")+"…")); var st=withIcon("button","btn ghost","x","Stop"); st.type="button"; st.onclick=closeAsk; t.appendChild(st); wrap.appendChild(t); return wrap; }
+    if(ASK.err){ var c=ASK.err.code;
+      if(c==="not_granted"||c==="sample_unavailable") wrap.appendChild(jnotice("Claude isn't available to this page","Allow Claude when asked, or type a JQL query directly, e.g. assignee = currentUser() AND issuetype = Bug."));
+      else if(c==="rate_limited") wrap.appendChild(jnotice("Too many questions at once","Wait a few seconds and ask again."));
+      else if(c==="bad_jql") wrap.appendChild(jnotice("Couldn't build a search",ASK.err.message||"Try rephrasing."));
+      else if(c==="tool_error") wrap.appendChild(jnotice("Jira didn't accept the search",((ASK.err.message||"")+"").slice(0,240)+(ASK.jql?" · JQL: "+ASK.jql:""),"Edit and retry",function(){ var n=$("askq"); if(n){ n.value=ASK.jql; n.focus(); } }));
+      else wrap.appendChild(jerr(ASK.err));
+      return wrap; }
+    var L=ASK.issues||[], N=L.length;
+    var cnt={todo:0,prog:0,done:0,bugs:0,high:0,over:0}, who={};
+    L.forEach(function(i){ var st=jget(i,"status")||{}, cat=(st.statusCategory&&st.statusCategory.key)||"new"; if(cat==="done") cnt.done++; else if(cat==="indeterminate") cnt.prog++; else cnt.todo++; if(typeOf(i).ic==="bug") cnt.bugs++; if(pri(i).rank<=1) cnt.high++; var di=dueInfo(i); if(di&&di.over&&cat!=="done") cnt.over++; var a=jget(i,"assignee"); var nm=a&&a.displayName||"Unassigned"; who[nm]=who[nm]||{todo:0,prog:0,done:0,n:0}; who[nm].n++; who[nm][cat==="done"?"done":cat==="indeterminate"?"prog":"todo"]++; });
+    var head=el("div","ahead"); var big=el("div","big"); tween(big,N,function(v){ return v+(ASK.more?"+":""); }); head.appendChild(big);
+    var ttl=el("div","ttl"); ttl.appendChild(el("b",null,ASK.title||"Results")); ttl.appendChild(el("span",null,(N===1?"ticket":"tickets")+(ASK.more?" (showing the first "+N+")":"")+" · for “"+ASK.q+"”")); head.appendChild(ttl); wrap.appendChild(head);
+    var cards=el("div","acards");
+    cards.appendChild(statCard("To do",cnt.todo,N,"var(--ink-3)"));
+    cards.appendChild(statCard("In progress",cnt.prog,N,"var(--accent)"));
+    cards.appendChild(statCard("Done",cnt.done,N,"var(--ok)"));
+    if(cnt.bugs) cards.appendChild(statCard("Bugs",cnt.bugs,N,"var(--urgent)"));
+    if(cnt.high) cards.appendChild(statCard("Highest / High",cnt.high,N,"var(--orange)"));
+    if(cnt.over) cards.appendChild(statCard("Overdue",cnt.over,N,"var(--urgent)"));
+    wrap.appendChild(cards);
+    var names=Object.keys(who).sort(function(a,b){ return who[b].n-who[a].n; });
+    if(names.length>1){ var wb=el("div","who-bars"); wb.appendChild(el("h3",null,"By assignee"));
+      var mx=who[names[0]].n;
+      names.slice(0,8).forEach(function(nm){ var w=who[nm], r=el("div","wb"); r.appendChild(el("span",null,nm)); var bar=el("i"); [["todo","var(--ink-3)"],["prog","var(--accent)"],["done","var(--ok)"]].forEach(function(x){ if(!w[x[0]]) return; var u=el("u"); u.style.background=x[1]; u.style.width=(w[x[0]]/mx*100)+"%"; u.title=w[x[0]]+" "+(x[0]==="prog"?"in progress":x[0]==="todo"?"to do":"done"); bar.appendChild(u); }); r.appendChild(bar); r.appendChild(el("b",null,String(w.n))); wb.appendChild(r); });
+      wrap.appendChild(wb); }
+    var jq=el("div","jql"); jq.appendChild(el("span",null,"JQL")); jq.appendChild(el("code",null,ASK.jql)); var cj=withIcon("button","btn ghost","copy",null); cj.type="button"; cj.title="Copy JQL"; cj.setAttribute("aria-label","Copy JQL"); cj.onclick=function(){ copy(ASK.jql); }; jq.appendChild(cj); var ej=withIcon("button","btn ghost","refresh",null); ej.type="button"; ej.title="Edit JQL"; ej.setAttribute("aria-label","Edit JQL"); ej.onclick=function(){ var n=$("askq"); if(n){ n.value=ASK.jql; n.focus(); } }; jq.appendChild(ej);
+    var site=(JIRA.cfg.site||""); if(/^https:\/\//.test(site)){ var oj=withIcon("a","btn ghost","ext",null); oj.href=site.replace(/\/$/,"")+"/issues/?jql="+encodeURIComponent(ASK.jql); oj.target="_blank"; oj.rel="noopener"; oj.title="Open this search in Jira"; oj.setAttribute("aria-label","Open this search in Jira"); jq.appendChild(oj); }
+    wrap.appendChild(jq);
+    if(!N){ wrap.appendChild(empty("No tickets","Nothing matches this question.")); return wrap; }
+    var multi=names.length>1 || (names[0] && /currentUser/.test(ASK.jql)===false);
+    var lst=el("div","jgroup"); L.slice(0,200).forEach(function(i,ix){ lst.appendChild(ticket(i,ix,teamsKeys(),true,multi)); }); wrap.appendChild(lst);
+    return wrap;
+  }
+
+  async function jiraLoad(force){
+    if(!JIRA.cfg || JIRA.loading) return;
+    JIRA.loading=true; if(state.tab==="jira") renderJira();
+    try{
+      var r=await jiraSearch(JIRA.cfg.jql||"assignee = currentUser() AND statusCategory != Done ORDER BY priority DESC, updated DESC",force,5);
+      var all=r.issues, stored=r.stored;
+      JIRA.issues=all; JIRA.err=null; JIRA.storedAt=stored||Date.now(); JIRA.retried=false;
+      if(force) toast("Jira refreshed · "+all.length+" open","refresh");
+    } catch(e){
+      JIRA.err=e||{code:"upstream_error"};
+      var code=JIRA.err.code;
+      if(code==="needs_reauth"||code==="server_not_connected"||code==="blocked_by_policy"||code==="not_in_manifest"||code==="approval_required"||code==="consent_required") JIRA.issues=null;
+      if(JIRA.err.retryable && !JIRA.retried){ JIRA.retried=true; JIRA.loading=false; setTimeout(function(){ jiraLoad(false); },(JIRA.err.retryAfterMs||1500)+Math.random()*1500); return; }
+    }
+    JIRA.loading=false;
+    if(JIRA.issues) $("c-jira").textContent=JIRA.issues.length;
+    if(state.tab==="jira") renderJira();
+  }
+
+  function jnotice(title,text,btnLabel,fn){ var n=el("div","notice"); n.appendChild(el("strong",null,title)); n.appendChild(el("span",null,text)); if(btnLabel){ var b=withIcon("button","btn primary","refresh",btnLabel); b.type="button"; b.onclick=fn; n.appendChild(b); } return n; }
+  function jerr(e){
+    var S=jserver(), c=e&&e.code;
+    if(c==="needs_reauth") return jnotice("Reconnect Jira","Your "+S+" connection expired. Reconnect it in claude.ai Settings → Connectors, then try again.","Try again",function(){ jiraLoad(true); });
+    if(c==="server_not_connected"||c==="selection_required") return jnotice("Connect Jira","Add the "+S+" connector in claude.ai Settings → Connectors to see your tickets here.","Try again",function(){ jiraLoad(true); });
+    if(c==="approval_required"||c==="consent_required") return jnotice("Allow Jira for this page","This page needs your OK once to read your Jira tickets.","Allow and load",function(){ jiraLoad(true); });
+    if(c==="not_in_manifest") return jnotice("Jira is turned off for this page","Turn it back on from this page's Permissions menu.","Open permissions",function(){ window.claude.use("permissions").then(function(pm){ if(pm&&pm.manage) pm.manage().catch(function(){ toast("Open the page's Permissions menu","info"); }); else toast("Open the page's Permissions menu","info"); }); });
+    if(c==="blocked_by_policy") return jnotice("Blocked by your organisation","Your admin's policy doesn't allow this page to read Jira.");
+    if(c==="not_granted"||c==="capability_disabled"||c==="capability_removed") return jnotice("Jira isn't available here","Open this page in Claude (desktop app or claude.ai) to see live tickets.");
+    if(c==="server_unavailable") return jnotice("Jira didn't answer","Atlassian is slow or unreachable right now.","Try again",function(){ jiraLoad(true); });
+    if(c==="tool_error") return jnotice("Jira returned an error",(e.message||"The search failed.").slice(0,240),"Try again",function(){ jiraLoad(true); });
+    return jnotice("Couldn't load Jira","Something went wrong while loading your tickets.","Try again",function(){ jiraLoad(true); });
+  }
+
+  function ticket(i,idx,tk,isNew,showAs){
+    var pr=pri(i), ty=typeOf(i), st=jget(i,"status")||{}, cat=(st.statusCategory&&st.statusCategory.key)||"new";
+    var row=el("article","tk"+(isNew?" enter":"")); row.style.setProperty("--pc",["var(--urgent)","var(--orange)","var(--quick)","var(--accent)","var(--ink-3)","var(--line-2)"][pr.rank]); if(isNew) row.style.setProperty("--d",Math.min(idx,10)*35+"ms");
+    var main=el("div","tk-main"), top=el("div","tk-top");
+    var tyEl=el("span","ttype"); tyEl.style.setProperty("--tc",ty.c); tyEl.appendChild(icon(ty.ic)); tyEl.appendChild(document.createTextNode(ty.name)); top.appendChild(tyEl);
+    var url=i.webUrl||((JIRA.cfg.site||"")+"/browse/"+i.key); var k=el("a","tk-key",i.key); if(/^https:\/\//.test(url)){ k.href=url; k.target="_blank"; k.rel="noopener"; } top.appendChild(k);
+    top.appendChild(el("span","st "+cat,st.name||"Open"));
+    if(pr.rank<5){ var pb=el("span","pri p"+pr.rank); pb.appendChild(icon(PRI_IC[pr.rank])); pb.appendChild(document.createTextNode(pr.name)); top.appendChild(pb); }
+    main.appendChild(top);
+    main.appendChild(el("div","tk-sum",jget(i,"summary")||"(no summary)"));
+    var meta=el("div","tk-meta");
+    var proj=jget(i,"project"); if(proj) meta.appendChild(el("span","tag",proj.key));
+    var par=jget(i,"parent"); if(par&&par.key){ var ep=withIcon("span","tag epic","bolt",par.key+((par.fields&&par.fields.summary)?" · "+par.fields.summary:"")); ep.title=(par.fields&&par.fields.summary)||par.key; ep.style.maxWidth="260px"; meta.appendChild(ep); }
+    if(tk[i.key]) meta.appendChild(withIcon("span","tag teams","bubble","asked in Teams"));
+    var di=dueInfo(i); if(di) meta.appendChild(withIcon("span","tag"+(di.over?" due-over":di.soon?" due-soon":""),"cal",fmtDue(di)));
+    var ud=updDays(i); var upd=withIcon("span","tag"+(ud>=7?" stale":""),"clock",ud===0?"updated today":"updated "+ud+"d ago"); meta.appendChild(upd);
+    var labels=jget(i,"labels")||[]; labels.slice(0,3).forEach(function(l){ meta.appendChild(withIcon("span","tag","tag",l)); }); if(labels.length>3) meta.appendChild(el("span","tag","+"+(labels.length-3)));
+    if(showAs){ var asg=jget(i,"assignee"); meta.appendChild(withIcon("span","tag teams","person",asg&&asg.displayName?asg.displayName:"Unassigned")); }
+    else { var rp=jget(i,"reporter"); if(rp&&rp.displayName) meta.appendChild(withIcon("span","tag","person","from "+rp.displayName)); }
+    main.appendChild(meta);
+    row.appendChild(main);
+    var actd=el("div","tk-act");
+    if(/^https:\/\//.test(url)){ var op=withIcon("a","btn","ext","Open"); op.href=url; op.target="_blank"; op.rel="noopener"; op.addEventListener("pointerdown",ripple); actd.appendChild(op); }
+    var cpk=withIcon("button","btn ghost","copy",null); cpk.type="button"; cpk.title="Copy "+i.key; cpk.setAttribute("aria-label","Copy "+i.key); cpk.onclick=function(){ copy(i.key+" "+(jget(i,"summary")||"")); }; actd.appendChild(cpk);
+    row.appendChild(actd);
+    return row;
+  }
+
+  function renderJira(){
+    var box=$("jira"); box.textContent="";
+    if(!JIRA.cfg){ return; }
+    box.appendChild(askBox());
+    if(ASK.q){ box.appendChild(askResults()); return; }
+    if(JIRA.err && !JIRA.issues){ box.appendChild(jerr(JIRA.err)); return; }
+    if(!JIRA.issues){ var sk=el("div","list"); sk.appendChild(skeleton()); box.appendChild(sk); return; }
+    var all=JIRA.issues, tk=teamsKeys();
+    var C={all:all.length,high:0,over:0,soon:0,stale:0,teams:0,bugs:0};
+    all.forEach(function(i){ var pr=pri(i).rank, di=dueInfo(i); if(pr<=1) C.high++; if(di&&di.over) C.over++; if(di&&!di.over&&di.days<=7) C.soon++; if(updDays(i)>=7) C.stale++; if(tk[i.key]) C.teams++; if(typeOf(i).ic==="bug") C.bugs++; });
+    $("c-jira").textContent=all.length;
+    var stats=el("div","jstats");
+    [["all","Open",C.all,""],["high","Highest / High",C.high,"red"],["over","Overdue",C.over,"red"],["soon","Due in 7 days",C.soon,"amber"],["teams","Asked in Teams",C.teams,"blue"],["bugs","Bugs",C.bugs,""],["stale","No update 7d+",C.stale,"amber"]].forEach(function(s){
+      if(s[0]!=="all" && !s[2]) return;
+      var b=el("button","jstat "+s[3]); b.type="button"; b.setAttribute("aria-pressed",String(JIRA.only===s[0])); var n=el("b",null,String(s[2])); b.appendChild(n); b.appendChild(document.createTextNode(s[1])); b.onclick=function(){ JIRA.only=JIRA.only===s[0]?"all":s[0]; renderJira(); }; stats.appendChild(b); });
+    box.appendChild(stats);
+
+    var bar=el("div","jbar");
+    var sl=el("label","search"); sl.htmlFor="jq"; sl.appendChild(icon("search")); var inp=el("input"); inp.id="jq"; inp.type="search"; inp.placeholder="Search key, summary, label, epic"; inp.value=JIRA.q; inp.autocomplete="off"; sl.appendChild(inp); bar.appendChild(sl);
+    inp.addEventListener("input",function(){ JIRA.q=inp.value.trim().toLowerCase(); var pos=inp.selectionStart; renderJira(); var n=$("jq"); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } });
+    function select(id,label,val,opts,on){ var s=el("select","sel"); s.id=id; s.setAttribute("aria-label",label); opts.forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if(o[0]===val) op.selected=true; s.appendChild(op); }); s.onchange=function(){ on(s.value); renderJira(); }; return s; }
+    var projs={}; all.forEach(function(i){ var p=jget(i,"project"); if(p) projs[p.key]=p.name||p.key; });
+    bar.appendChild(select("jproj","Project",JIRA.proj,[["all","All projects"]].concat(Object.keys(projs).sort().map(function(k){ return [k,k+" · "+projs[k]]; })),function(v){ JIRA.proj=v; }));
+    bar.appendChild(select("jsort","Sort",JIRA.sort,[["priority","Sort: priority"],["due","Sort: due date"],["updated","Sort: recently updated"],["oldest","Sort: least recently updated"],["created","Sort: newest"]],function(v){ JIRA.sort=v; }));
+    bar.appendChild(select("jgroup","Group",JIRA.group,[["project","Group: project"],["status","Group: status"],["epic","Group: epic"],["type","Group: type"],["none","No grouping"]],function(v){ JIRA.group=v; }));
+    var fr=el("div","jfresh"); var ago2=JIRA.storedAt?fmtMins(Math.max(0,Math.round((Date.now()-JIRA.storedAt)/60000))):"–"; fr.appendChild(el("span",null,JIRA.loading?"refreshing…":"updated "+ago2+" ago")); var rb=el("button","iconbtn"+(JIRA.loading?" spin":"")); rb.type="button"; rb.title="Refresh (r)"; rb.setAttribute("aria-label","Refresh Jira"); rb.appendChild(icon("refresh")); rb.onclick=function(){ jiraLoad(true); }; fr.appendChild(rb); bar.appendChild(fr);
+    box.appendChild(bar);
+    if(JIRA.err){ var w=el("div","gaps"); w.appendChild(icon("warn")); w.appendChild(el("span",null,"Couldn't refresh just now. Showing the last loaded tickets.")); box.appendChild(w); }
+
+    var list=all.filter(function(i){
+      if(JIRA.proj!=="all"){ var p=jget(i,"project"); if(!p||p.key!==JIRA.proj) return false; }
+      var di=dueInfo(i);
+      if(JIRA.only==="high" && pri(i).rank>1) return false;
+      if(JIRA.only==="over" && !(di&&di.over)) return false;
+      if(JIRA.only==="soon" && !(di&&!di.over&&di.days<=7)) return false;
+      if(JIRA.only==="stale" && updDays(i)<7) return false;
+      if(JIRA.only==="teams" && !tk[i.key]) return false;
+      if(JIRA.only==="bugs" && typeOf(i).ic!=="bug") return false;
+      if(JIRA.q){ var par=jget(i,"parent")||{}; var hay=[i.key,jget(i,"summary"),(jget(i,"labels")||[]).join(" "),par.key,par.fields&&par.fields.summary,(jget(i,"status")||{}).name].join(" ").toLowerCase(); if(hay.indexOf(JIRA.q)<0) return false; }
+      return true; });
+    var t=function(i,k){ var v=jget(i,k); return v?Date.parse(v):0; };
+    var cmp={priority:function(a,b){ return pri(a).rank-pri(b).rank || ((dueInfo(a)||{days:1e9}).days-(dueInfo(b)||{days:1e9}).days) || t(b,"updated")-t(a,"updated"); },
+      due:function(a,b){ return ((dueInfo(a)||{days:1e9}).days-(dueInfo(b)||{days:1e9}).days) || pri(a).rank-pri(b).rank; },
+      updated:function(a,b){ return t(b,"updated")-t(a,"updated"); }, oldest:function(a,b){ return t(a,"updated")-t(b,"updated"); }, created:function(a,b){ return t(b,"created")-t(a,"created"); }}[JIRA.sort];
+    list.sort(cmp);
+    if(!list.length){ box.appendChild(empty(all.length?"No tickets match":"No open tickets",all.length?"Try another filter or search.":"Nothing assigned to you is open. Enjoy it.",!all.length)); return; }
+    var groups={}, order=[];
+    list.forEach(function(i){ var g;
+      if(JIRA.group==="project"){ var p=jget(i,"project")||{}; g=(p.key||"—")+(p.name?" · "+p.name:""); }
+      else if(JIRA.group==="status"){ g=(jget(i,"status")||{}).name||"Open"; }
+      else if(JIRA.group==="epic"){ var pa=jget(i,"parent"); g=pa&&pa.key?pa.key+((pa.fields&&pa.fields.summary)?" · "+pa.fields.summary:""):"No epic"; }
+      else if(JIRA.group==="type"){ g=typeOf(i).name; }
+      else g="";
+      if(!groups[g]){ groups[g]=[]; order.push(g); } groups[g].push(i); });
+    var idx=0;
+    order.forEach(function(g){
+      var sec=el("div","jgroup");
+      if(g){ var h=el("div","jgh"); h.appendChild(el("span",null,g)); h.appendChild(el("span","count",String(groups[g].length))); sec.appendChild(h); }
+      groups[g].forEach(function(i){ var isNew=!JIRA.seen[i.key]; JIRA.seen[i.key]=1; sec.appendChild(ticket(i,idx++,tk,isNew)); });
+      box.appendChild(sec); });
+  }
+  setInterval(function(){ if(state.tab==="jira" && JIRA.cfg && !JIRA.loading && document.visibilityState==="visible"){ var a=document.activeElement; if(!a||(a.id!=="jq"&&a.id!=="askq")) jiraLoad(false); } },600000);
+
   function cards(){ return Array.prototype.slice.call(document.querySelectorAll("#list .card")); }
   function markFocus(){ cards().forEach(function(c,i){ c.classList.toggle("focus",i===state.focus); }); }
   function move(n){ var cs=cards(); if(!cs.length) return; state.focus=Math.max(0,Math.min(cs.length-1,state.focus+n)); markFocus(); cs[state.focus].scrollIntoView({block:"nearest",behavior:RM?"auto":"smooth"}); }
   function act(a){ var c=cards()[state.focus]; if(!c) return; var b=c.querySelector('[data-act="'+a+'"]'); if(b) b.click(); }
 
-  function setTab(t){ state.tab=t; state.focus=-1; render(); }
-  ["open","snoozed","done"].forEach(function(t){ $("tab-"+t).addEventListener("click",function(){ setTab(t); }); });
+  function setTab(t){ if(t==="jira" && !JIRA.cfg) return; state.tab=t; state.focus=-1; render(); if(t==="jira" && !JIRA.issues && !JIRA.loading && !JIRA.err) jiraLoad(false); }
+  ["open","snoozed","done","jira"].forEach(function(t){ $("tab-"+t).addEventListener("click",function(){ setTab(t); }); });
   $("q").addEventListener("input",function(e){ state.q=e.target.value.trim().toLowerCase(); render(); });
   var help=$("help");
   $("helpbtn").addEventListener("click",function(){ help.hidden=false; });
@@ -587,12 +956,12 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     if(k==="/"){ $("q").focus(); e.preventDefault(); return; }
     if(k==="j"){ move(1); e.preventDefault(); }
     else if(k==="k"){ move(-1); e.preventDefault(); }
-    else if(k==="1") setTab("open"); else if(k==="2") setTab("snoozed"); else if(k==="3") setTab("done");
+    else if(k==="1") setTab("open"); else if(k==="2") setTab("snoozed"); else if(k==="3") setTab("done"); else if(k==="4") setTab("jira"); else if(k==="r" && state.tab==="jira") jiraLoad(true); else if(k==="a"){ if(state.tab!=="jira") setTab("jira"); setTimeout(function(){ var n=$("askq"); if(n) n.focus(); },30); e.preventDefault(); }
     else if(k==="e"){ var c=cards()[state.focus]; if(c){ var t=c.querySelector("textarea"); if(t){ t.focus(); t.setSelectionRange(t.value.length,t.value.length); e.preventDefault(); } } }
     else if(k==="s") act("send"); else if(k==="c") act("copy"); else if(k==="d") act("done"); else if(k==="z") act("snooze");
   });
   addEventListener("resize",glide);
-  setInterval(function(){ var a=document.activeElement; if(!a || (a.tagName!=="TEXTAREA" && a.tagName!=="INPUT")) render(); },60000);
+  setInterval(function(){ var a=document.activeElement; if(!a || (a.tagName!=="TEXTAREA" && a.tagName!=="INPUT" && a.tagName!=="SELECT")) render(); },60000);
 
   function firstPaintDone(){ state.loaded=true; render(); }
   if(window.claude && window.claude.use){
@@ -606,6 +975,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       },function(){ $("runinfo").textContent="Lost connection to the queue. Reload the page."; });
       db.doc("meta/run").onSnapshot(function(s){ state.run=s.exists?s.data():null; if(state.loaded) render(); });
       db.doc("meta/digest").onSnapshot(function(s){ state.digest=s.exists?s.data():null; if(state.loaded) render(); });
+      db.doc("meta/jira").onSnapshot(function(s){ var c=s.exists?s.data():null; JIRA.cfg=(c && c.cloudId)?c:null; $("tab-jira").hidden=!JIRA.cfg; if(!JIRA.cfg && state.tab==="jira") state.tab="open"; glide(); if(JIRA.cfg && !JIRA.issues && !JIRA.loading) jiraLoad(false); });
     },function(){ firstPaintDone(); });
     setTimeout(function(){ if(!state.loaded) firstPaintDone(); },10000);
   } else { setTimeout(firstPaintDone,0); }

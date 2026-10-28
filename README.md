@@ -22,6 +22,10 @@ It never sends anything on its own.
   <img src="docs/reply-queue-light.png" width="49%" alt="Reply Queue, light theme, showing urgent, quick and normal drafts">
   <img src="docs/reply-queue-dark.png" width="49%" alt="Reply Queue, dark theme">
 </p>
+<p align="center">
+  <img src="docs/jira-tickets-light.png" width="49%" alt="My Jira tab with open tickets">
+  <img src="docs/jira-ask-dark.png" width="49%" alt="Ask Jira results with status stats">
+</p>
 <p align="center"><sub>Sample data. Names and messages are made up.</sub></p>
 
 ## What it does
@@ -39,6 +43,8 @@ It never sends anything on its own.
 | **Commitment tracker** | Catches your own "I'll check", "will send by EOD" and adds them to your task list, along with what you are waiting on from others. |
 | **Learns from your edits** | When you change a draft before sending, the difference is saved and used for the next drafts. |
 | **Security check** | Flags it if you posted a password or token in chat. |
+| **My Jira tab** (optional) | Your open tickets live from Jira: priority, type, status, epic, due date, labels, stale tickets and tickets someone asked about in chat. Filter, sort and group by project, status, epic or type. |
+| **Ask Jira** | Type a question such as "how many tickets closed today?" or "bugs assigned to Sam". Claude turns it into JQL and shows the count, To do / In progress / Done stats and a per-assignee breakdown. |
 
 ## Requirements
 
