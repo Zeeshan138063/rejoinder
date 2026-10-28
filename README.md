@@ -20,6 +20,8 @@ flowchart LR
 
 It never sends anything on its own.
 
+<p align="center"><img src="docs/demo.gif" width="620" alt="Reply Queue demo: morning brief, sent insights, Jira tab, standup draft and Ask Jira"></p>
+
 <p align="center">
   <img src="docs/reply-queue-light.png" width="49%" alt="Reply Queue, light theme, showing urgent, quick and normal drafts">
   <img src="docs/reply-queue-dark.png" width="49%" alt="Reply Queue, dark theme">
