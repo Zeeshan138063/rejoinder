@@ -1,0 +1,9 @@
+.DS_Store
+*.plugin
+*.zip
+node_modules/
+# never commit a personal agent folder
+config.md
+CLAUDE.md
+memory/
+TASKS.md
