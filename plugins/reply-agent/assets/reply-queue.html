@@ -311,6 +311,19 @@ button.wb[aria-pressed="true"]{background:var(--accent-soft)}
 .brief-sec li a:hover{color:var(--accent);border-color:var(--accent)}
 .brief.collapsed .brief-secs,.brief.collapsed .brief-hl{display:none}
 
+.prs{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow)}
+.prs summary{display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;list-style:none}
+.prs summary::-webkit-details-marker{display:none}
+.prs summary .count{margin-left:2px}
+.prs summary .chev{margin-left:auto;transition:transform .25s var(--ease)}
+.prs[open] summary .chev{transform:rotate(180deg)}
+.pr{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.pr:first-of-type{margin-top:10px}
+.pr .pt{display:flex;align-items:center;gap:8px;min-width:0;font-weight:500}
+.pr .pt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr .pm{grid-column:1;font-size:12.5px;color:var(--ink-3)}
+.pr .pa{grid-row:1 / span 2;grid-column:2;display:flex;gap:4px}
+
 /* empty + skeleton */
 .empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;color:var(--ink-3);padding:40px 20px;border:1px dashed var(--line-2);border-radius:18px;background:color-mix(in srgb,var(--surface) 60%,transparent)}
 .empty strong{color:var(--ink);font-size:16px;font-weight:600}
@@ -416,6 +429,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     </div>
   </div>
 
+  <details class="prs" id="prs" hidden></details>
   <div class="list" id="list" aria-live="polite"></div>
   <section class="jira" id="jira" hidden aria-label="My Jira tickets"></section>
   <details class="digest" id="digest" hidden>
@@ -485,6 +499,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
     tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/>',
     ticket:'<path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M10 5v12" stroke-dasharray="2 2"/>',
+    pr:'<circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M6 8.5v7M18 15.5V9a3 3 0 0 0-3-3h-4"/><path d="m13 4-2 2 2 2"/>',
     person:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
     spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
     back:'<path d="M15 18l-6-6 6-6"/>'
@@ -729,7 +744,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     $("greet").firstChild.nodeValue=hi;
     $("greet-sub").textContent=!state.loaded?"Loading your queue":g.open.length?(urgent?urgent+" urgent"+(g.open.length>urgent?", "+(g.open.length-urgent)+" more":"")+" waiting on you":g.open.length+" "+(g.open.length===1?"reply":"replies")+" waiting on you"):"Nothing waiting on you";
 
-    renderFilters(); renderSources(); renderBrief();
+    renderFilters(); renderSources(); renderBrief(); renderPRs();
 
     var list=$("list"); list.textContent="";
     if(state.tab==="jira"){ renderJira(); }
@@ -1206,6 +1221,26 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     document.querySelectorAll("[data-tkeys]").forEach(function(box){ fillTicketChips(box,box.dataset.tkeys.split(",")); });
   }
 
+
+  /* PR review queue (prs/* written by the hourly run) */
+  function renderPRs(){
+    var box=$("prs"); var open=(state.prs||[]).filter(function(p){ return p.status!=="done"; }).sort(function(a,b){ return Date.parse(a.at||0)-Date.parse(b.at||0); });
+    if(state.tab!=="open" || !open.length){ box.hidden=true; return; }
+    var wasOpen=box.open; box.hidden=false; box.textContent="";
+    var sm=el("summary"); sm.appendChild(icon("pr")); sm.appendChild(document.createTextNode("PRs waiting for your review")); var oldest=open[0]&&open[0].at?mins(open[0].at):0; sm.appendChild(el("span","count"+(oldest>1440?" hot":""),String(open.length))); var ch=icon("chev"); ch.classList.add("chev"); sm.appendChild(ch); box.appendChild(sm);
+    open.forEach(function(p){
+      var r=el("div","pr"); var t=el("div","pt"); var label=(p.repo?p.repo+" ":"")+(p.number?"#"+p.number:""); t.appendChild(el("span",null,(p.title?p.title+" · ":"")+(label||"Pull request")));
+      var m=p.at?mins(p.at):0; var w=withIcon("span","wait "+(m<240?"fresh":m<1440?"aging":"stale"),"clock",fmtMins(m)); t.appendChild(w); r.appendChild(t);
+      r.appendChild(el("div","pm","from "+(p.from||"someone")+(p.chat?" in "+p.chat:"")));
+      var a=el("div","pa");
+      var u=(typeof p.url==="string"&&/^https:\/\//.test(p.url))?p.url:null; if(u){ var o=withIcon("a","btn","ext","Review"); o.href=u; o.target="_blank"; o.rel="noopener"; a.appendChild(o); }
+      var cu=(typeof p.chatUrl==="string"&&/^https:\/\//.test(p.chatUrl))?p.chatUrl:null; if(cu){ var c2=withIcon("a","btn ghost","bubble",null); c2.href=cu; c2.target="_blank"; c2.rel="noopener"; c2.title="Open the message"; c2.setAttribute("aria-label","Open the message"); a.appendChild(c2); }
+      var d=withIcon("button","btn ghost","check",null); d.type="button"; d.title="Mark reviewed"; d.setAttribute("aria-label","Mark reviewed"); d.onclick=function(){ if(!db) return; db.collection("prs").doc(p.id).update({status:"done",doneAt:new Date().toISOString()}).then(function(){ toast("Marked reviewed","check"); },function(){ toast("Couldn't save. Try again","warn"); }); }; a.appendChild(d);
+      r.appendChild(a); box.appendChild(r);
+    });
+    box.open=wasOpen||open.length<=4;
+  }
+
   /* daily brief pinned by the reply-brief skill */
   function briefHidden(id){ try{ return localStorage.getItem("rq-brief-hide")===id; }catch(e){ return false; } }
   function renderBrief(){
@@ -1292,6 +1327,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       db.doc("meta/run").onSnapshot(function(s){ state.run=s.exists?s.data():null; if(state.loaded) render(); });
       db.doc("meta/digest").onSnapshot(function(s){ state.digest=s.exists?s.data():null; if(state.loaded) render(); });
       db.doc("meta/brief").onSnapshot(function(s){ state.brief=s.exists?s.data():null; if(state.loaded) render(); });
+      db.collection("prs").onSnapshot(function(sn){ state.prs=sn.docs.map(function(x){ var o=Object.assign({},x.data()); o.id=x.id; return o; }); if(state.loaded) render(); },function(){});
       db.doc("meta/jira").onSnapshot(function(s){ var c=s.exists?s.data():null; JIRA.cfg=(c && c.cloudId)?c:null; $("tab-jira").hidden=!JIRA.cfg; if(!JIRA.cfg && state.tab==="jira") state.tab="open"; glide(); if(JIRA.cfg && !JIRA.issues && !JIRA.loading) jiraLoad(false); });
     },function(){ firstPaintDone(); });
     setTimeout(function(){ if(!state.loaded) firstPaintDone(); },10000);

@@ -99,6 +99,15 @@ If the agent folder is reachable:
 - **People and chats:** for a new person or conversation, create a short file in `memory/people/` or `memory/chats/`.
 - **Secrets:** if the user's own message contains a password, token or key, add an urgent card from "Security check" telling them to rotate it and delete the message.
 
+## 8b. PR review queue
+
+Track code reviews people ask the user for:
+
+1. **Find review requests.** Look for pull or merge request links in the messages you collected: `bitbucket.org/<ws>/<repo>/pull-requests/<n>`, `github.com/<o>/<r>/pull/<n>`, `gitlab.com/.../merge_requests/<n>`, or the equivalent on your org's hosts. Count a link only when it is addressed to the user or comes with "review", "PR", "approve", "check" or "merge", or the equivalent in the user's other language.
+2. **Write a card** for each new one: `prs/<repo>-<n>` = `{url, repo, number, title?, from, chat, chatUrl, at, status:"open"}`. Use the PR title only if the message gives it. Don't call the code host.
+3. **Close cards.** Set `{status:"done", doneAt}` when the user later says "approved", "merged", "done" or "reviewed" about that PR in the same chat, or links it with "LGTM". The user can also close a card from the page.
+4. **Clean up.** Delete `prs/*` that have been done for more than 14 days.
+
 ## 9. Report
 
 End with one short message. A scheduled run turns it into the phone notification:

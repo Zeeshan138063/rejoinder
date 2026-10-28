@@ -118,7 +118,8 @@ If your company has rules about AI tools reading work chat, check them before yo
 
 - [x] Morning brief and end-of-day wrap
 - [x] Standup prep from tracker and chat (Write my standup, in the Jira tab)
-- [ ] PR review queue and approvals queue
+- [x] PR review queue (links people send you to review)
+- [ ] Approvals queue
 - [x] Jira quick actions: move status and comment from the Jira tab (with a confirm step)
 - [ ] Meeting transcripts to decisions and action items
 - [ ] Focus mode: hold non-urgent drafts during meetings
