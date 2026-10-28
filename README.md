@@ -77,7 +77,7 @@ On older versions:
 
 **Claude Cowork (desktop app)**
 
-Download `reply-agent.plugin` from the [latest release](https://github.com/Zeeshan138063/reply-agent/releases) and add it in Claude's plugin settings. You can also ask Claude to "install the plugin from github.com/Zeeshan138063/reply-agent".
+Download `reply-agent.plugin` (v0.2.0) from the [latest release](https://github.com/Zeeshan138063/reply-agent/releases) and add it in Claude's plugin settings. You can also ask Claude to "install the plugin from github.com/Zeeshan138063/reply-agent".
 
 ## Set up (about 10 minutes)
 
@@ -133,6 +133,10 @@ If your company has rules about AI tools reading work chat, check them before yo
 - [ ] Team mode: shared "who is waiting on whom" board
 - [ ] Prefilled-compose links for Slack and Google Chat
 - [x] Instant VIP alerts recipe (Power Automate / Slack workflows)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## Repository layout
 
