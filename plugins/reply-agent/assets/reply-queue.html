@@ -152,6 +152,7 @@ kbd{font:11px var(--mono);color:var(--ink-3);border:1px solid var(--line-2);bord
 .btn.primary:hover{filter:brightness(1.05);background:linear-gradient(180deg,var(--accent-2),var(--accent))}
 .btn.ghost{border-color:transparent;background:none;color:var(--ink-2)}
 .btn.ghost:hover{background:var(--surface-2);color:var(--ink)}
+.btn.warnbtn{border-color:var(--quick);color:var(--quick);background:var(--quick-soft);white-space:normal;text-align:left}
 .btn.hl{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
 .ripple{position:absolute;border-radius:50%;background:currentColor;opacity:.25;transform:scale(0);pointer-events:none}
 .hint{display:block;font-size:12px;color:var(--ink-3);padding:0 12px 10px;background:var(--surface)}
@@ -591,7 +592,16 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       var cp=withIcon("button","btn","copy","Copy"); cp.type="button"; cp.dataset.act="copy"; cp.addEventListener("pointerdown",ripple); cp.onclick=function(){ copy(ta.value,ta); }; tools.appendChild(cp);
       tools.appendChild(el("span","spacer"));
       ms.dataset.act="done"; ms.addEventListener("pointerdown",ripple);
-      ms.onclick=function(){ leave(c,d.id,{status:"sent",sentDraft:ta.value,doneAt:new Date().toISOString()},"Marked sent","check"); };
+      var armed=false, armT=null;
+      ms.onclick=function(){
+        if(/<[^>]+>/.test(ta.value) && !armed){
+          armed=true; ms.classList.add("warnbtn"); ms.lastChild.nodeValue="Still has a <placeholder>. Click again if you sent it"; ta.focus();
+          toast("The reply still has a <placeholder>. Fill it in before sending","warn");
+          clearTimeout(armT); armT=setTimeout(function(){ armed=false; ms.classList.remove("warnbtn"); ms.lastChild.nodeValue="Mark sent"; },6000);
+          return;
+        }
+        leave(c,d.id,{status:"sent",sentDraft:ta.value,doneAt:new Date().toISOString()},"Marked sent","check");
+      };
       tools.appendChild(ms);
       if(b==="open"){ var sn=withIcon("button","btn ghost","clock","1h"); sn.type="button"; sn.dataset.act="snooze"; sn.title="Snooze for 1 hour"; sn.setAttribute("aria-label","Snooze for 1 hour"); sn.onclick=function(){ leave(c,d.id,{status:"snoozed",snoozeUntil:new Date(Date.now()+3600000).toISOString()},"Snoozed for 1 hour","clock"); }; tools.appendChild(sn); }
       var dn=withIcon("button","btn ghost","x"); dn.type="button"; dn.title="No reply needed"; dn.setAttribute("aria-label","No reply needed"); dn.onclick=function(){ leave(c,d.id,{status:"done",doneAt:new Date().toISOString()},"Closed, no reply needed","check"); }; tools.appendChild(dn);
