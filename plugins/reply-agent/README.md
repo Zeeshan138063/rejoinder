@@ -14,6 +14,7 @@ In Claude Code these show as `/reply-agent:reply-setup` and `/reply-agent:reply-
 
 - **`/reply-setup`**: one-time setup. It picks your chat tool and tracker, learns your voice and the people you work with, creates your knowledge-base folder and Reply Queue page, and schedules the hourly run.
 - **`/reply-drafts`**: the hourly or on-demand run. It collects messages, filters them, adds context, drafts replies and fills the queue.
+- **`/reply-brief`**: the morning brief and end-of-day wrap, pinned to the top of the Reply Queue: what to reply to first, meetings, due tickets, promises, and a standup draft.
 
 ## Requirements
 

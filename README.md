@@ -92,7 +92,7 @@ It will:
 6. Schedule the hourly run.
 7. Run once, so you have real drafts straight away.
 
-After that, use `/reply-drafts` any time for an instant check, for example right after a meeting.
+Use `/reply-brief` for a morning brief or end-of-day wrap (setup can schedule both). After that, use `/reply-drafts` any time for an instant check, for example right after a meeting.
 
 ## Configure
 
@@ -116,7 +116,7 @@ If your company has rules about AI tools reading work chat, check them before yo
 
 ## Roadmap
 
-- [ ] Morning brief and end-of-day wrap
+- [x] Morning brief and end-of-day wrap
 - [ ] Standup prep from tracker and chat
 - [ ] PR review queue and approvals queue
 - [ ] Meeting transcripts to decisions and action items

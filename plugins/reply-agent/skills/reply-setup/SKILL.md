@@ -65,6 +65,13 @@ Use the scheduled-task tool (`create_trigger`):
 
 Tell the user the first run time, and how to pause the task or change it.
 
+Offer two more scheduled tasks for the `reply-brief` skill, and create them only if the user agrees:
+
+- **Morning brief:** about 30 minutes after their working day starts
+- **End-of-day wrap:** about 30 minutes before it ends
+
+Use the same computer setting and push notifications as the hourly run.
+
 ## 7. First run and hand-off
 
 Run the `reply-drafts` skill once now, so the queue has real drafts. Then tell the user, in 3–5 lines:
