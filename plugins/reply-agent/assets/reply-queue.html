@@ -228,6 +228,13 @@ kbd{font:11px var(--mono);color:var(--ink-3);border:1px solid var(--line-2);bord
 .acard span{font-size:12px;color:var(--ink-3)}
 .acard i{display:block;height:4px;border-radius:2px;background:var(--surface-2);overflow:hidden}
 .acard i u{display:block;height:100%;border-radius:2px;background:var(--bc,var(--accent));text-decoration:none;transition:width .8s var(--ease)}
+.acard.pick{cursor:pointer;transition:border-color .15s,transform .15s var(--ease)}
+.acard.pick:hover{transform:translateY(-1px);border-color:var(--line-2)}
+.acard.pick[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.afilters{flex-wrap:wrap}
+button.wb{appearance:none;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;padding:3px 4px;border-radius:7px}
+button.wb:hover{background:var(--surface-2)}
+button.wb[aria-pressed="true"]{background:var(--accent-soft)}
 .who-bars{display:flex;flex-direction:column;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
 .who-bars h3{margin:0 0 2px;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
 .wb{display:grid;grid-template-columns:minmax(90px,160px) 1fr auto;gap:10px;align-items:center;font-size:13px}
@@ -240,6 +247,34 @@ kbd{font:11px var(--mono);color:var(--ink-3);border:1px solid var(--line-2);bord
 .thinking{display:flex;align-items:center;gap:10px;color:var(--ink-2);font-size:13.5px;padding:6px 2px}
 .dots{display:inline-flex;gap:4px}.dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.3}
 @media (prefers-reduced-motion: no-preference){.dots i{animation:bob 1s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}@keyframes bob{50%{opacity:1;transform:translateY(-3px)}}}
+
+/* source chips + tab icons + Jira hero (original artwork, no third-party logos) */
+.sources{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.src{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font:500 12px var(--sans);border-radius:999px;padding:3px 10px 3px 4px;cursor:pointer}
+.src .sic{width:20px;height:20px;border-radius:7px;display:grid;place-items:center;color:#fff}
+.src .sic svg.i{width:12px;height:12px;stroke-width:2.2}
+.src b{color:var(--ink);font-weight:600}
+.src .live{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.seg button svg.i{width:15px;height:15px;opacity:.75}
+.seg button[aria-selected="true"] svg.i{opacity:1;color:var(--accent)}
+.jhero{position:relative;overflow:hidden;display:flex;align-items:center;gap:18px;border-radius:18px;padding:18px 20px;color:#fff;background:linear-gradient(120deg,#1f3fae 0%,#2f5bd3 45%,#5a7ff0 100%);box-shadow:0 10px 30px color-mix(in srgb,#2f5bd3 30%,transparent)}
+:root[data-theme="dark"] .jhero{background:linear-gradient(120deg,#16255f 0%,#233f9a 50%,#3858c4 100%)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .jhero{background:linear-gradient(120deg,#16255f 0%,#233f9a 50%,#3858c4 100%)}}
+.jhero svg.art{width:120px;height:92px;flex:none}
+.jhero .jh-t{display:flex;flex-direction:column;gap:6px;min-width:0;position:relative;z-index:1}
+.jhero h2{margin:0;font:600 20px var(--sans);letter-spacing:-.02em}
+.jhero p{margin:0;font-size:13px;opacity:.85}
+.jhero .jh-k{display:flex;gap:8px;flex-wrap:wrap}
+.jhero .jh-k span{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:2px 10px;font:500 12px var(--sans)}
+.jhero .jh-k b{font-weight:700}
+.jhero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%)}
+@media (prefers-reduced-motion: no-preference){
+  .jhero .t1{animation:floatA 5s ease-in-out infinite}.jhero .t2{animation:floatB 6s ease-in-out infinite}.jhero .t3{animation:floatA 7s ease-in-out infinite}
+  @keyframes floatA{50%{transform:translateY(-4px)}}@keyframes floatB{50%{transform:translateY(3px)}}
+  .jhero .spark{animation:twinkle 2.4s ease-in-out infinite;transform-origin:center}
+  @keyframes twinkle{50%{opacity:.35;transform:scale(.8)}}
+}
+@media (max-width:560px){.jhero svg.art{width:84px;height:66px}.jhero h2{font-size:17px}.jhero{gap:12px;padding:14px}.seg button svg.i{display:none}.seg{overflow:hidden}.seg button{min-width:0}}
 
 /* empty + skeleton */
 .empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;color:var(--ink-3);padding:40px 20px;border:1px dashed var(--line-2);border-radius:18px;background:color-mix(in srgb,var(--surface) 60%,transparent)}
@@ -318,7 +353,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
         <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="42"/><circle class="prog" id="ringprog" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg>
         <div class="ring-c"><b id="ringpct">0%</b><span>cleared</span></div>
       </div>
-      <p class="greet" id="greet">Hello<small id="greet-sub">Loading your queue</small></p>
+      <div><p class="greet" id="greet">Hello<small id="greet-sub">Loading your queue</small></p><div class="sources" id="sources"></div></div>
     </div>
     <div class="ov-r">
       <div class="stats">
@@ -412,6 +447,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     refresh:'<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
     cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
     tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/>',
+    ticket:'<path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M10 5v12" stroke-dasharray="2 2"/>',
     person:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
     spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
     back:'<path d="M15 18l-6-6 6-6"/>'
@@ -642,7 +678,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     $("greet").firstChild.nodeValue=hi;
     $("greet-sub").textContent=!state.loaded?"Loading your queue":g.open.length?(urgent?urgent+" urgent"+(g.open.length>urgent?", "+(g.open.length-urgent)+" more":"")+" waiting on you":g.open.length+" "+(g.open.length===1?"reply":"replies")+" waiting on you"):"Nothing waiting on you";
 
-    renderFilters();
+    renderFilters(); renderSources();
 
     var list=$("list"); list.textContent="";
     if(state.tab==="jira"){ renderJira(); }
@@ -724,7 +760,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
   async function askJira(q){
     q=(q||"").trim(); if(!q) return;
     if(ASK.ctl) ASK.ctl.abort();
-    ASK={q:q,jql:"",title:"",loading:true,stage:"",err:null,issues:null,more:false,ctl:new AbortController()};
+    ASK={q:q,jql:"",title:"",loading:true,stage:"",err:null,issues:null,more:false,ctl:new AbortController(),f:{},seen:{},sort:"jira"};
     var my=ASK;
     try{
       if(looksLikeJql(q)){ my.jql=q; my.title="JQL search"; }
@@ -774,8 +810,23 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
   }
 
   function statCard(label,n,total,color){ var c=el("div","acard"); var b=el("b"); c.appendChild(b); tween(b,n); c.appendChild(el("span",null,label)); var bar=el("i"), u=el("u"); u.style.setProperty("--bc",color); u.style.width="0%"; bar.appendChild(u); c.appendChild(bar); requestAnimationFrame(function(){ requestAnimationFrame(function(){ u.style.width=(total?Math.round(n/total*100):0)+"%"; }); }); return c; }
+  function meId(){ var L=JIRA.issues||[]; for(var x=0;x<L.length;x++){ var a=jget(L[x],"assignee"); if(a&&a.accountId) return a.accountId; } return null; }
+  function catOf(i){ var st=jget(i,"status")||{}; return (st.statusCategory&&st.statusCategory.key)||"new"; }
+  function asgName(i){ var a=jget(i,"assignee"); return a&&a.displayName||"Unassigned"; }
+  function askFilterPass(i,f,me){
+    if(f.cat && catOf(i)!==f.cat) return false;
+    if(f.who==="me"){ var a=jget(i,"assignee"); if(!me||!a||a.accountId!==me) return false; }
+    else if(f.who && asgName(i)!==f.who) return false;
+    if(f.type && typeOf(i).ic!==f.type) return false;
+    if(f.high && pri(i).rank>1) return false;
+    if(f.over){ var di=dueInfo(i); if(!(di&&di.over&&catOf(i)!=="done")) return false; }
+    if(f.proj){ var p=jget(i,"project"); if(!p||p.key!==f.proj) return false; }
+    if(f.q){ var par=jget(i,"parent")||{}; var hay=[i.key,jget(i,"summary"),asgName(i),(jget(i,"labels")||[]).join(" "),par.key,par.fields&&par.fields.summary,(jget(i,"status")||{}).name].join(" ").toLowerCase(); if(hay.indexOf(f.q)<0) return false; }
+    return true;
+  }
+  function askRefresh(keepFocus){ var pos=null; if(keepFocus){ var n=$("aq2"); if(n) pos=n.selectionStart; } renderJira(); if(keepFocus){ var m=$("aq2"); if(m){ m.focus(); try{ m.setSelectionRange(pos,pos); }catch(e){} } } }
   function askResults(){
-    var wrap=el("div","ares");
+    var wrap=el("div","ares"); ASK.f=ASK.f||{}; ASK.seen=ASK.seen||{}; var f=ASK.f;
     var back=withIcon("button","btn ghost","back","My open tickets"); back.type="button"; back.onclick=closeAsk; back.style.alignSelf="flex-start"; wrap.appendChild(back);
     if(ASK.loading){ var t=el("div","thinking"); var d=el("span","dots"); d.appendChild(el("i")); d.appendChild(el("i")); d.appendChild(el("i")); t.appendChild(d); t.appendChild(el("span",null,(ASK.stage||"Working")+"…")); var st=withIcon("button","btn ghost","x","Stop"); st.type="button"; st.onclick=closeAsk; t.appendChild(st); wrap.appendChild(t); return wrap; }
     if(ASK.err){ var c=ASK.err.code;
@@ -785,30 +836,71 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       else if(c==="tool_error") wrap.appendChild(jnotice("Jira didn't accept the search",((ASK.err.message||"")+"").slice(0,240)+(ASK.jql?" · JQL: "+ASK.jql:""),"Edit and retry",function(){ var n=$("askq"); if(n){ n.value=ASK.jql; n.focus(); } }));
       else wrap.appendChild(jerr(ASK.err));
       return wrap; }
-    var L=ASK.issues||[], N=L.length;
-    var cnt={todo:0,prog:0,done:0,bugs:0,high:0,over:0}, who={};
-    L.forEach(function(i){ var st=jget(i,"status")||{}, cat=(st.statusCategory&&st.statusCategory.key)||"new"; if(cat==="done") cnt.done++; else if(cat==="indeterminate") cnt.prog++; else cnt.todo++; if(typeOf(i).ic==="bug") cnt.bugs++; if(pri(i).rank<=1) cnt.high++; var di=dueInfo(i); if(di&&di.over&&cat!=="done") cnt.over++; var a=jget(i,"assignee"); var nm=a&&a.displayName||"Unassigned"; who[nm]=who[nm]||{todo:0,prog:0,done:0,n:0}; who[nm].n++; who[nm][cat==="done"?"done":cat==="indeterminate"?"prog":"todo"]++; });
-    var head=el("div","ahead"); var big=el("div","big"); tween(big,N,function(v){ return v+(ASK.more?"+":""); }); head.appendChild(big);
-    var ttl=el("div","ttl"); ttl.appendChild(el("b",null,ASK.title||"Results")); ttl.appendChild(el("span",null,(N===1?"ticket":"tickets")+(ASK.more?" (showing the first "+N+")":"")+" · for “"+ASK.q+"”")); head.appendChild(ttl); wrap.appendChild(head);
-    var cards=el("div","acards");
-    cards.appendChild(statCard("To do",cnt.todo,N,"var(--ink-3)"));
-    cards.appendChild(statCard("In progress",cnt.prog,N,"var(--accent)"));
-    cards.appendChild(statCard("Done",cnt.done,N,"var(--ok)"));
-    if(cnt.bugs) cards.appendChild(statCard("Bugs",cnt.bugs,N,"var(--urgent)"));
-    if(cnt.high) cards.appendChild(statCard("Highest / High",cnt.high,N,"var(--orange)"));
-    if(cnt.over) cards.appendChild(statCard("Overdue",cnt.over,N,"var(--urgent)"));
+    var ALL=ASK.issues||[], me=meId();
+    /* counts over everything except the status filter, so the status cards stay meaningful */
+    var fNoCat=Object.assign({},f,{cat:null});
+    var base=ALL.filter(function(i){ return askFilterPass(i,fNoCat,me); });
+    var L=base.filter(function(i){ return !f.cat || catOf(i)===f.cat; });
+    var N=ALL.length, n=L.length, active=Object.keys(f).filter(function(k){ return f[k]; }).length;
+    var cnt={todo:0,prog:0,done:0}, who={};
+    base.forEach(function(i){ var cat=catOf(i); if(cat==="done") cnt.done++; else if(cat==="indeterminate") cnt.prog++; else cnt.todo++; var nm=asgName(i); who[nm]=who[nm]||{todo:0,prog:0,done:0,n:0}; who[nm].n++; who[nm][cat==="done"?"done":cat==="indeterminate"?"prog":"todo"]++; });
+
+    var head=el("div","ahead"); var big=el("div","big"); tween(big,active?n:N,function(v){ return v+(ASK.more&&!active?"+":""); }); head.appendChild(big);
+    var ttl=el("div","ttl"); ttl.appendChild(el("b",null,ASK.title||"Results")); ttl.appendChild(el("span",null,(active?"of "+N+" tickets match your filters":(N===1?"ticket":"tickets")+(ASK.more?" (showing the first "+N+")":""))+" · for “"+ASK.q+"”")); head.appendChild(ttl);
+    if(active){ var clr=withIcon("button","btn ghost","x","Clear filters"); clr.type="button"; clr.onclick=function(){ ASK.f={}; askRefresh(); }; head.appendChild(clr); }
+    wrap.appendChild(head);
+
+    /* status cards double as filters */
+    var cards=el("div","acards"), tot=base.length;
+    [["new","To do",cnt.todo,"var(--ink-3)"],["indeterminate","In progress",cnt.prog,"var(--accent)"],["done","Done",cnt.done,"var(--ok)"]].forEach(function(x){
+      var cd=statCard(x[1],x[2],tot,x[3]); cd.setAttribute("role","button"); cd.tabIndex=0; cd.classList.add("pick"); cd.setAttribute("aria-pressed",String(f.cat===x[0])); cd.title=f.cat===x[0]?"Show all statuses":"Show only "+x[1].toLowerCase();
+      var tog=function(){ f.cat=f.cat===x[0]?null:x[0]; askRefresh(); }; cd.onclick=tog; cd.onkeydown=function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); tog(); } };
+      cards.appendChild(cd); });
+    var tb=ALL.filter(function(i){ return typeOf(i).ic==="bug"; }).length, th=ALL.filter(function(i){ return pri(i).rank<=1; }).length, to=ALL.filter(function(i){ var di=dueInfo(i); return di&&di.over&&catOf(i)!=="done"; }).length;
+    if(tb) cards.appendChild(statCard("Bugs",base.filter(function(i){ return typeOf(i).ic==="bug"; }).length,tot,"var(--urgent)"));
+    if(th) cards.appendChild(statCard("Highest / High",base.filter(function(i){ return pri(i).rank<=1; }).length,tot,"var(--orange)"));
+    if(to) cards.appendChild(statCard("Overdue",base.filter(function(i){ var di=dueInfo(i); return di&&di.over&&catOf(i)!=="done"; }).length,tot,"var(--urgent)"));
     wrap.appendChild(cards);
+
+    /* filter chips */
+    var chips=el("div","filters afilters");
+    function chip(label,on,dot,fn){ var b=el("button","fchip"); b.type="button"; b.setAttribute("aria-pressed",String(!!on)); if(dot){ var i=el("i"); i.style.background=dot; b.appendChild(i); } b.appendChild(document.createTextNode(label)); b.onclick=fn; chips.appendChild(b); }
+    var mineN=me?ALL.filter(function(i){ var a=jget(i,"assignee"); return a&&a.accountId===me; }).length:0;
+    if(me && mineN && mineN<N) chip("My tasks · "+mineN,f.who==="me","var(--accent)",function(){ f.who=f.who==="me"?null:"me"; askRefresh(); });
+    var unN=ALL.filter(function(i){ return !jget(i,"assignee"); }).length;
+    if(unN) chip("Unassigned · "+unN,f.who==="Unassigned","var(--ink-3)",function(){ f.who=f.who==="Unassigned"?null:"Unassigned"; askRefresh(); });
+    var types={}; ALL.forEach(function(i){ var t=typeOf(i); types[t.ic]=types[t.ic]||{n:0,name:t.name,c:t.c}; types[t.ic].n++; });
+    if(Object.keys(types).length>1) Object.keys(types).forEach(function(k){ var t=types[k]; chip(t.name+(t.n>1&&!/s$/.test(t.name)?"s":"")+" · "+t.n,f.type===k,t.c,function(){ f.type=f.type===k?null:k; askRefresh(); }); });
+    if(th && th<N) chip("Highest / High",f.high,"var(--orange)",function(){ f.high=!f.high; askRefresh(); });
+    if(to) chip("Overdue",f.over,"var(--urgent)",function(){ f.over=!f.over; askRefresh(); });
+    if(chips.childNodes.length) wrap.appendChild(chips);
+
+    /* search within results + project + sort */
+    var bar=el("div","jbar");
+    var sl=el("label","search"); sl.htmlFor="aq2"; sl.appendChild(icon("search")); var inp=el("input"); inp.id="aq2"; inp.type="search"; inp.placeholder="Filter these results: key, summary, person, label"; inp.value=f.q||""; inp.autocomplete="off"; sl.appendChild(inp); bar.appendChild(sl);
+    inp.addEventListener("input",function(){ f.q=inp.value.trim().toLowerCase()||null; askRefresh(true); });
+    var projs={}; ALL.forEach(function(i){ var p=jget(i,"project"); if(p) projs[p.key]=p.name||p.key; });
+    if(Object.keys(projs).length>1){ var ps=el("select","sel"); ps.setAttribute("aria-label","Project"); [["","All projects"]].concat(Object.keys(projs).sort().map(function(k){ return [k,k+" · "+projs[k]]; })).forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if((f.proj||"")===o[0]) op.selected=true; ps.appendChild(op); }); ps.onchange=function(){ f.proj=ps.value||null; askRefresh(); }; bar.appendChild(ps); }
+    var ss=el("select","sel"); ss.setAttribute("aria-label","Sort"); [["jira","Sort: as Jira returned"],["priority","Sort: priority"],["due","Sort: due date"],["updated","Sort: recently updated"],["assignee","Sort: assignee"]].forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if((ASK.sort||"jira")===o[0]) op.selected=true; ss.appendChild(op); }); ss.onchange=function(){ ASK.sort=ss.value; askRefresh(); }; bar.appendChild(ss);
+    wrap.appendChild(bar);
+
     var names=Object.keys(who).sort(function(a,b){ return who[b].n-who[a].n; });
-    if(names.length>1){ var wb=el("div","who-bars"); wb.appendChild(el("h3",null,"By assignee"));
+    if(names.length>1){ var wb=el("div","who-bars"); wb.appendChild(el("h3",null,"By assignee · click to filter"));
       var mx=who[names[0]].n;
-      names.slice(0,8).forEach(function(nm){ var w=who[nm], r=el("div","wb"); r.appendChild(el("span",null,nm)); var bar=el("i"); [["todo","var(--ink-3)"],["prog","var(--accent)"],["done","var(--ok)"]].forEach(function(x){ if(!w[x[0]]) return; var u=el("u"); u.style.background=x[1]; u.style.width=(w[x[0]]/mx*100)+"%"; u.title=w[x[0]]+" "+(x[0]==="prog"?"in progress":x[0]==="todo"?"to do":"done"); bar.appendChild(u); }); r.appendChild(bar); r.appendChild(el("b",null,String(w.n))); wb.appendChild(r); });
+      names.slice(0,10).forEach(function(nm){ var w=who[nm], r=el("button","wb"); r.type="button"; r.setAttribute("aria-pressed",String(f.who===nm)); r.onclick=function(){ f.who=f.who===nm?null:nm; askRefresh(); }; r.appendChild(el("span",null,nm)); var bar2=el("i"); [["todo","var(--ink-3)"],["prog","var(--accent)"],["done","var(--ok)"]].forEach(function(x){ if(!w[x[0]]) return; var u=el("u"); u.style.background=x[1]; u.style.width=(w[x[0]]/mx*100)+"%"; u.title=w[x[0]]+" "+(x[0]==="prog"?"in progress":x[0]==="todo"?"to do":"done"); bar2.appendChild(u); }); r.appendChild(bar2); r.appendChild(el("b",null,String(w.n))); wb.appendChild(r); });
       wrap.appendChild(wb); }
-    var jq=el("div","jql"); jq.appendChild(el("span",null,"JQL")); jq.appendChild(el("code",null,ASK.jql)); var cj=withIcon("button","btn ghost","copy",null); cj.type="button"; cj.title="Copy JQL"; cj.setAttribute("aria-label","Copy JQL"); cj.onclick=function(){ copy(ASK.jql); }; jq.appendChild(cj); var ej=withIcon("button","btn ghost","refresh",null); ej.type="button"; ej.title="Edit JQL"; ej.setAttribute("aria-label","Edit JQL"); ej.onclick=function(){ var n=$("askq"); if(n){ n.value=ASK.jql; n.focus(); } }; jq.appendChild(ej);
+
+    var jq=el("div","jql"); jq.appendChild(el("span",null,"JQL")); jq.appendChild(el("code",null,ASK.jql)); var cj=withIcon("button","btn ghost","copy",null); cj.type="button"; cj.title="Copy JQL"; cj.setAttribute("aria-label","Copy JQL"); cj.onclick=function(){ copy(ASK.jql); }; jq.appendChild(cj); var ej=withIcon("button","btn ghost","refresh",null); ej.type="button"; ej.title="Edit JQL"; ej.setAttribute("aria-label","Edit JQL"); ej.onclick=function(){ var n2=$("askq"); if(n2){ n2.value=ASK.jql; n2.focus(); } }; jq.appendChild(ej);
     var site=(JIRA.cfg.site||""); if(/^https:\/\//.test(site)){ var oj=withIcon("a","btn ghost","ext",null); oj.href=site.replace(/\/$/,"")+"/issues/?jql="+encodeURIComponent(ASK.jql); oj.target="_blank"; oj.rel="noopener"; oj.title="Open this search in Jira"; oj.setAttribute("aria-label","Open this search in Jira"); jq.appendChild(oj); }
     wrap.appendChild(jq);
+
     if(!N){ wrap.appendChild(empty("No tickets","Nothing matches this question.")); return wrap; }
-    var multi=names.length>1 || (names[0] && /currentUser/.test(ASK.jql)===false);
-    var lst=el("div","jgroup"); L.slice(0,200).forEach(function(i,ix){ lst.appendChild(ticket(i,ix,teamsKeys(),true,multi)); }); wrap.appendChild(lst);
+    if(!n){ wrap.appendChild(empty("No tickets match these filters","Clear a filter to see more.")); return wrap; }
+    var tt=function(i,k){ var v=jget(i,k); return v?Date.parse(v):0; };
+    var sorts={priority:function(a,b){ return pri(a).rank-pri(b).rank||tt(b,"updated")-tt(a,"updated"); },due:function(a,b){ return ((dueInfo(a)||{days:1e9}).days-(dueInfo(b)||{days:1e9}).days)||pri(a).rank-pri(b).rank; },updated:function(a,b){ return tt(b,"updated")-tt(a,"updated"); },assignee:function(a,b){ return asgName(a).localeCompare(asgName(b))||pri(a).rank-pri(b).rank; }};
+    if(sorts[ASK.sort]) L=L.slice().sort(sorts[ASK.sort]);
+    var multi=names.length>1 || !/currentUser/.test(ASK.jql);
+    var lst=el("div","jgroup"), tk=teamsKeys(); L.slice(0,200).forEach(function(i,ix){ var isNew=!ASK.seen[i.key]; ASK.seen[i.key]=1; lst.appendChild(ticket(i,ix,tk,isNew,multi)); }); wrap.appendChild(lst);
     return wrap;
   }
 
@@ -828,6 +920,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     }
     JIRA.loading=false;
     if(JIRA.issues) $("c-jira").textContent=JIRA.issues.length;
+    renderSources();
     if(state.tab==="jira") renderJira();
   }
 
@@ -876,6 +969,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
   function renderJira(){
     var box=$("jira"); box.textContent="";
     if(!JIRA.cfg){ return; }
+    if(!ASK.q) box.appendChild(jiraHero());
     box.appendChild(askBox());
     if(ASK.q){ box.appendChild(askResults()); return; }
     if(JIRA.err && !JIRA.issues){ box.appendChild(jerr(JIRA.err)); return; }
@@ -934,7 +1028,31 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       groups[g].forEach(function(i){ var isNew=!JIRA.seen[i.key]; JIRA.seen[i.key]=1; sec.appendChild(ticket(i,idx++,tk,isNew)); });
       box.appendChild(sec); });
   }
-  setInterval(function(){ if(state.tab==="jira" && JIRA.cfg && !JIRA.loading && document.visibilityState==="visible"){ var a=document.activeElement; if(!a||(a.id!=="jq"&&a.id!=="askq")) jiraLoad(false); } },600000);
+  setInterval(function(){ if(state.tab==="jira" && JIRA.cfg && !JIRA.loading && document.visibilityState==="visible"){ var a=document.activeElement; if(!a||(a.id!=="jq"&&a.id!=="askq"&&a.id!=="aq2")) jiraLoad(false); } },600000);
+
+
+  /* tab icons + source chips */
+  [["open","bubble"],["snoozed","clock"],["done","check"],["jira","ticket"]].forEach(function(x){ var b=$("tab-"+x[0]); if(b) b.insertBefore(icon(x[1]),b.firstChild); });
+  function renderSources(){
+    var box=$("sources"); if(!box) return; box.textContent="";
+    var provs={}; state.drafts.forEach(function(d){ var p=prov(d); if(p) provs[p]=1; }); if(!Object.keys(provs).length && state.run) provs.teams=1;
+    Object.keys(provs).forEach(function(p){ var P=PLATFORMS[p]||{name:"Chat",color:"var(--generic)"}; var b=el("button","src"); b.type="button"; var ic=el("span","sic"); ic.style.background=P.color; ic.appendChild(icon("bubble")); b.appendChild(ic); b.appendChild(el("b",null,P.name)); if(state.run) b.appendChild(el("span","live")); b.appendChild(document.createTextNode(state.run?"watching":"")); b.title=P.name+" messages"; b.onclick=function(){ setTab("open"); }; box.appendChild(b); });
+    if(JIRA.cfg){ var j=el("button","src"); j.type="button"; var ic2=el("span","sic"); ic2.style.background="var(--accent)"; ic2.appendChild(icon("ticket")); j.appendChild(ic2); j.appendChild(el("b",null,"Jira")); j.appendChild(document.createTextNode(JIRA.issues?JIRA.issues.length+" open":"tickets")); j.title="Open the Jira tab"; j.onclick=function(){ setTab("jira"); }; box.appendChild(j); }
+  }
+  function jiraHero(){
+    var L=JIRA.issues||[], hi=0, ov=0, ip=0;
+    L.forEach(function(i){ if(pri(i).rank<=1) hi++; var di=dueInfo(i); if(di&&di.over) ov++; if(catOf(i)==="indeterminate") ip++; });
+    var h=el("section","jhero"); h.setAttribute("aria-label","Jira summary");
+    var ns="http://www.w3.org/2000/svg", sv=document.createElementNS(ns,"svg"); sv.setAttribute("viewBox","0 0 120 92"); sv.setAttribute("class","art"); sv.setAttribute("aria-hidden","true");
+    sv.innerHTML='<g class="t3"><rect x="30" y="8" width="74" height="22" rx="6" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.35)"/><rect x="30" y="8" width="4" height="22" rx="2" fill="#9fe0bf"/><rect x="40" y="15" width="34" height="4" rx="2" fill="rgba(255,255,255,.7)"/><rect x="40" y="22" width="22" height="3" rx="1.5" fill="rgba(255,255,255,.4)"/></g>'+
+      '<g class="t2"><rect x="16" y="35" width="84" height="24" rx="6" fill="rgba(255,255,255,.26)" stroke="rgba(255,255,255,.45)"/><rect x="16" y="35" width="4" height="24" rx="2" fill="#ffc06b"/><rect x="27" y="42" width="44" height="4" rx="2" fill="#fff"/><rect x="27" y="50" width="28" height="3" rx="1.5" fill="rgba(255,255,255,.55)"/><circle cx="88" cy="47" r="5" fill="rgba(255,255,255,.35)"/></g>'+
+      '<g class="t1"><rect x="4" y="64" width="90" height="24" rx="6" fill="#fff"/><rect x="4" y="64" width="4" height="24" rx="2" fill="#ff8a76"/><rect x="15" y="71" width="50" height="4" rx="2" fill="#2f5bd3"/><rect x="15" y="79" width="30" height="3" rx="1.5" fill="#b8c4e6"/><rect x="72" y="71" width="16" height="10" rx="3" fill="#e8eefc"/></g>'+
+      '<g class="spark"><path d="M108 52v10M103 57h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>';
+    h.appendChild(sv);
+    var t=el("div","jh-t"); t.appendChild(el("h2",null,"My Jira")); t.appendChild(el("p",null,JIRA.issues?"Everything assigned to you that isn't done yet":"Loading your tickets"));
+    if(JIRA.issues){ var k=el("div","jh-k"); [[L.length,"open"],[ip,"in progress"],[hi,"high priority"],[ov,"overdue"]].forEach(function(x){ var sp=el("span"); sp.appendChild(el("b",null,String(x[0]))); sp.appendChild(document.createTextNode(" "+x[1])); k.appendChild(sp); }); t.appendChild(k); }
+    h.appendChild(t); return h;
+  }
 
   function cards(){ return Array.prototype.slice.call(document.querySelectorAll("#list .card")); }
   function markFocus(){ cards().forEach(function(c,i){ c.classList.toggle("focus",i===state.focus); }); }
