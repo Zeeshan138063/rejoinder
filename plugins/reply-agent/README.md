@@ -10,6 +10,8 @@ Reply Agent watches your work chat (Microsoft Teams, Slack and others) during yo
 
 ## Skills
 
+In Claude Code these show as `/reply-agent:reply-setup` and `/reply-agent:reply-drafts`.
+
 - **`/reply-setup`**: one-time setup. It picks your chat tool and tracker, learns your voice and the people you work with, creates your knowledge-base folder and Reply Queue page, and schedules the hourly run.
 - **`/reply-drafts`**: the hourly or on-demand run. It collects messages, filters them, adds context, drafts replies and fills the queue.
 

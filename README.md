@@ -74,6 +74,8 @@ Run:
 /reply-setup
 ```
 
+In Claude Code, plugin skills are listed with the plugin name in front, as `/reply-agent:reply-setup` and `/reply-agent:reply-drafts`. Both forms work.
+
 It will:
 
 1. Ask for your chat tool, tracker (or none), working hours and time zone.
