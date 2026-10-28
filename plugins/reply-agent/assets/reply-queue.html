@@ -836,7 +836,8 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       else if(c==="tool_error") wrap.appendChild(jnotice("Jira didn't accept the search",((ASK.err.message||"")+"").slice(0,240)+(ASK.jql?" · JQL: "+ASK.jql:""),"Edit and retry",function(){ var n=$("askq"); if(n){ n.value=ASK.jql; n.focus(); } }));
       else wrap.appendChild(jerr(ASK.err));
       return wrap; }
-    var ALL=ASK.issues||[], me=meId();
+    var RAW=ASK.issues||[], me=meId();
+    var ALL=f.proj?RAW.filter(function(i){ var p=jget(i,"project"); return p&&p.key===f.proj; }):RAW;
     /* counts over everything except the status filter, so the status cards stay meaningful */
     var fNoCat=Object.assign({},f,{cat:null});
     var base=ALL.filter(function(i){ return askFilterPass(i,fNoCat,me); });
@@ -879,7 +880,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     var bar=el("div","jbar");
     var sl=el("label","search"); sl.htmlFor="aq2"; sl.appendChild(icon("search")); var inp=el("input"); inp.id="aq2"; inp.type="search"; inp.placeholder="Filter these results: key, summary, person, label"; inp.value=f.q||""; inp.autocomplete="off"; sl.appendChild(inp); bar.appendChild(sl);
     inp.addEventListener("input",function(){ f.q=inp.value.trim().toLowerCase()||null; askRefresh(true); });
-    var projs={}; ALL.forEach(function(i){ var p=jget(i,"project"); if(p) projs[p.key]=p.name||p.key; });
+    var projs={}; RAW.forEach(function(i){ var p=jget(i,"project"); if(p) projs[p.key]=p.name||p.key; });
     if(Object.keys(projs).length>1){ var ps=el("select","sel"); ps.setAttribute("aria-label","Project"); [["","All projects"]].concat(Object.keys(projs).sort().map(function(k){ return [k,k+" · "+projs[k]]; })).forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if((f.proj||"")===o[0]) op.selected=true; ps.appendChild(op); }); ps.onchange=function(){ f.proj=ps.value||null; askRefresh(); }; bar.appendChild(ps); }
     var ss=el("select","sel"); ss.setAttribute("aria-label","Sort"); [["jira","Sort: as Jira returned"],["priority","Sort: priority"],["due","Sort: due date"],["updated","Sort: recently updated"],["assignee","Sort: assignee"]].forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if((ASK.sort||"jira")===o[0]) op.selected=true; ss.appendChild(op); }); ss.onchange=function(){ ASK.sort=ss.value; askRefresh(); }; bar.appendChild(ss);
     wrap.appendChild(bar);
@@ -894,7 +895,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     var site=(JIRA.cfg.site||""); if(/^https:\/\//.test(site)){ var oj=withIcon("a","btn ghost","ext",null); oj.href=site.replace(/\/$/,"")+"/issues/?jql="+encodeURIComponent(ASK.jql); oj.target="_blank"; oj.rel="noopener"; oj.title="Open this search in Jira"; oj.setAttribute("aria-label","Open this search in Jira"); jq.appendChild(oj); }
     wrap.appendChild(jq);
 
-    if(!N){ wrap.appendChild(empty("No tickets","Nothing matches this question.")); return wrap; }
+    if(!RAW.length){ wrap.appendChild(empty("No tickets","Nothing matches this question.")); return wrap; }
     if(!n){ wrap.appendChild(empty("No tickets match these filters","Clear a filter to see more.")); return wrap; }
     var tt=function(i,k){ var v=jget(i,k); return v?Date.parse(v):0; };
     var sorts={priority:function(a,b){ return pri(a).rank-pri(b).rank||tt(b,"updated")-tt(a,"updated"); },due:function(a,b){ return ((dueInfo(a)||{days:1e9}).days-(dueInfo(b)||{days:1e9}).days)||pri(a).rank-pri(b).rank; },updated:function(a,b){ return tt(b,"updated")-tt(a,"updated"); },assignee:function(a,b){ return asgName(a).localeCompare(asgName(b))||pri(a).rank-pri(b).rank; }};
@@ -969,15 +970,17 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
   function renderJira(){
     var box=$("jira"); box.textContent="";
     if(!JIRA.cfg){ return; }
-    if(!ASK.q) box.appendChild(jiraHero());
+    if(!ASK.q) box.appendChild(jiraHero(JIRA.issues&&JIRA.proj!=="all"?JIRA.issues.filter(function(i){ var p=jget(i,"project"); return p&&p.key===JIRA.proj; }):null));
     box.appendChild(askBox());
     if(ASK.q){ box.appendChild(askResults()); return; }
     if(JIRA.err && !JIRA.issues){ box.appendChild(jerr(JIRA.err)); return; }
     if(!JIRA.issues){ var sk=el("div","list"); sk.appendChild(skeleton()); box.appendChild(sk); return; }
-    var all=JIRA.issues, tk=teamsKeys();
+    var everything=JIRA.issues, tk=teamsKeys();
+    if(JIRA.proj!=="all" && !everything.some(function(i){ var p=jget(i,"project"); return p&&p.key===JIRA.proj; })) JIRA.proj="all";
+    var all=JIRA.proj==="all"?everything:everything.filter(function(i){ var p=jget(i,"project"); return p&&p.key===JIRA.proj; });
     var C={all:all.length,high:0,over:0,soon:0,stale:0,teams:0,bugs:0};
     all.forEach(function(i){ var pr=pri(i).rank, di=dueInfo(i); if(pr<=1) C.high++; if(di&&di.over) C.over++; if(di&&!di.over&&di.days<=7) C.soon++; if(updDays(i)>=7) C.stale++; if(tk[i.key]) C.teams++; if(typeOf(i).ic==="bug") C.bugs++; });
-    $("c-jira").textContent=all.length;
+    $("c-jira").textContent=everything.length;
     var stats=el("div","jstats");
     [["all","Open",C.all,""],["high","Highest / High",C.high,"red"],["over","Overdue",C.over,"red"],["soon","Due in 7 days",C.soon,"amber"],["teams","Asked in Teams",C.teams,"blue"],["bugs","Bugs",C.bugs,""],["stale","No update 7d+",C.stale,"amber"]].forEach(function(s){
       if(s[0]!=="all" && !s[2]) return;
@@ -988,7 +991,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     var sl=el("label","search"); sl.htmlFor="jq"; sl.appendChild(icon("search")); var inp=el("input"); inp.id="jq"; inp.type="search"; inp.placeholder="Search key, summary, label, epic"; inp.value=JIRA.q; inp.autocomplete="off"; sl.appendChild(inp); bar.appendChild(sl);
     inp.addEventListener("input",function(){ JIRA.q=inp.value.trim().toLowerCase(); var pos=inp.selectionStart; renderJira(); var n=$("jq"); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } });
     function select(id,label,val,opts,on){ var s=el("select","sel"); s.id=id; s.setAttribute("aria-label",label); opts.forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if(o[0]===val) op.selected=true; s.appendChild(op); }); s.onchange=function(){ on(s.value); renderJira(); }; return s; }
-    var projs={}; all.forEach(function(i){ var p=jget(i,"project"); if(p) projs[p.key]=p.name||p.key; });
+    var projs={}; everything.forEach(function(i){ var p=jget(i,"project"); if(p) projs[p.key]=p.name||p.key; });
     bar.appendChild(select("jproj","Project",JIRA.proj,[["all","All projects"]].concat(Object.keys(projs).sort().map(function(k){ return [k,k+" · "+projs[k]]; })),function(v){ JIRA.proj=v; }));
     bar.appendChild(select("jsort","Sort",JIRA.sort,[["priority","Sort: priority"],["due","Sort: due date"],["updated","Sort: recently updated"],["oldest","Sort: least recently updated"],["created","Sort: newest"]],function(v){ JIRA.sort=v; }));
     bar.appendChild(select("jgroup","Group",JIRA.group,[["project","Group: project"],["status","Group: status"],["epic","Group: epic"],["type","Group: type"],["none","No grouping"]],function(v){ JIRA.group=v; }));
@@ -1039,8 +1042,8 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     Object.keys(provs).forEach(function(p){ var P=PLATFORMS[p]||{name:"Chat",color:"var(--generic)"}; var b=el("button","src"); b.type="button"; var ic=el("span","sic"); ic.style.background=P.color; ic.appendChild(icon("bubble")); b.appendChild(ic); b.appendChild(el("b",null,P.name)); if(state.run) b.appendChild(el("span","live")); b.appendChild(document.createTextNode(state.run?"watching":"")); b.title=P.name+" messages"; b.onclick=function(){ setTab("open"); }; box.appendChild(b); });
     if(JIRA.cfg){ var j=el("button","src"); j.type="button"; var ic2=el("span","sic"); ic2.style.background="var(--accent)"; ic2.appendChild(icon("ticket")); j.appendChild(ic2); j.appendChild(el("b",null,"Jira")); j.appendChild(document.createTextNode(JIRA.issues?JIRA.issues.length+" open":"tickets")); j.title="Open the Jira tab"; j.onclick=function(){ setTab("jira"); }; box.appendChild(j); }
   }
-  function jiraHero(){
-    var L=JIRA.issues||[], hi=0, ov=0, ip=0;
+  function jiraHero(scoped){
+    var L=scoped||JIRA.issues||[], hi=0, ov=0, ip=0;
     L.forEach(function(i){ if(pri(i).rank<=1) hi++; var di=dueInfo(i); if(di&&di.over) ov++; if(catOf(i)==="indeterminate") ip++; });
     var h=el("section","jhero"); h.setAttribute("aria-label","Jira summary");
     var ns="http://www.w3.org/2000/svg", sv=document.createElementNS(ns,"svg"); sv.setAttribute("viewBox","0 0 120 92"); sv.setAttribute("class","art"); sv.setAttribute("aria-hidden","true");
@@ -1049,7 +1052,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       '<g class="t1"><rect x="4" y="64" width="90" height="24" rx="6" fill="#fff"/><rect x="4" y="64" width="4" height="24" rx="2" fill="#ff8a76"/><rect x="15" y="71" width="50" height="4" rx="2" fill="#2f5bd3"/><rect x="15" y="79" width="30" height="3" rx="1.5" fill="#b8c4e6"/><rect x="72" y="71" width="16" height="10" rx="3" fill="#e8eefc"/></g>'+
       '<g class="spark"><path d="M108 52v10M103 57h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>';
     h.appendChild(sv);
-    var t=el("div","jh-t"); t.appendChild(el("h2",null,"My Jira")); t.appendChild(el("p",null,JIRA.issues?"Everything assigned to you that isn't done yet":"Loading your tickets"));
+    var t=el("div","jh-t"); var pn=null; if(scoped&&scoped.length){ var pp=jget(scoped[0],"project"); pn=pp&&(pp.key+(pp.name?" · "+pp.name:"")); } t.appendChild(el("h2",null,pn?"My Jira · "+pn:"My Jira")); t.appendChild(el("p",null,JIRA.issues?(pn?"Your open tickets in this project":"Everything assigned to you that isn't done yet"):"Loading your tickets"));
     if(JIRA.issues){ var k=el("div","jh-k"); [[L.length,"open"],[ip,"in progress"],[hi,"high priority"],[ov,"overdue"]].forEach(function(x){ var sp=el("span"); sp.appendChild(el("b",null,String(x[0]))); sp.appendChild(document.createTextNode(" "+x[1])); k.appendChild(sp); }); t.appendChild(k); }
     h.appendChild(t); return h;
   }

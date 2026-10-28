@@ -53,6 +53,10 @@ For each urgent, quick and normal message, write 1–3 lines of context:
 - the 3–5 messages before it in the conversation
 - the person's file and the chat's file from `memory/`
 - if `~~project tracker` is configured: any ticket key that matches `ticket_prefixes`, or that clearly matches the topic, with its status, owner and last update
+- **Jira credit guard:**
+  - With the Atlassian connector, use only the plain Jira tools: `searchJiraIssuesUsingJql`, `getJiraIssue` and `listJiraIssueComments`. These are single-product lookups and use no Rovo credits.
+  - Never use the Atlassian `search` tool or the Teamwork Graph tools (`getGraphContext`, `getGraphObject`, `addGraphContext`). Those are enriched cross-product calls billed in Rovo credits.
+  - Ask for only the fields you need, and use at most 10 tracker calls per run.
 
 Never invent facts. Anything the reply needs but you don't know (a link, a date, a decision) goes in `gaps`, and the draft uses a `<placeholder>`. The queue page will not send a draft that still contains `<…>`.
 
