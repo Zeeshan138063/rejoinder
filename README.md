@@ -1,5 +1,7 @@
 # Reply Agent
 
+[![Validate plugin](https://github.com/Zeeshan138063/reply-agent/actions/workflows/validate.yml/badge.svg)](https://github.com/Zeeshan138063/reply-agent/actions/workflows/validate.yml) ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+
 **An assistant for Claude that watches your work chat during working hours, skips the noise, and drafts replies in your own voice. You review and send.**
 
 If you lead a team, you get tagged in a dozen chats all day. Most of it is banter, FYIs and meeting chatter. The few messages that really need you get buried, and some get missed. Reply Agent goes through that chat every hour and writes the replies that are needed. Every draft waits for you.
