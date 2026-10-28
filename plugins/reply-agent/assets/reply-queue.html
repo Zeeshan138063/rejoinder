@@ -210,7 +210,12 @@ kbd{font:11px var(--mono);color:var(--ink-3);border:1px solid var(--line-2);bord
 .tag.due-over{border-color:transparent;background:var(--urgent-soft);color:var(--urgent)}
 .tag.due-soon{border-color:transparent;background:var(--quick-soft);color:var(--quick)}
 .tag.stale{border-style:dashed;color:var(--quick)}
-.tk-act{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.tk-x{grid-column:1 / -1;display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
+.tk-x .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tk-x textarea{width:100%;box-sizing:border-box;min-height:70px;resize:vertical;border:1px solid var(--line-2);border-radius:9px;background:var(--bg);color:var(--ink);font:14px/1.5 var(--sans);padding:8px 10px}
+.tk-x small{color:var(--ink-3);font-size:12px}
+.btn.go{background:var(--ok);border-color:var(--ok);color:#fff}
+.tk-act{display:flex;flex-direction:row;flex-wrap:wrap;gap:4px;align-items:center;justify-content:flex-end;align-self:start}
 .tk-act .btn{padding:6px 9px}
 .notice{display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;color:var(--ink-2)}
 .notice strong{color:var(--ink)}
@@ -1009,8 +1014,11 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     row.appendChild(main);
     var actd=el("div","tk-act");
     if(/^https:\/\//.test(url)){ var op=withIcon("a","btn","ext","Open"); op.href=url; op.target="_blank"; op.rel="noopener"; op.addEventListener("pointerdown",ripple); actd.appendChild(op); }
+    var mv=withIcon("button","btn ghost","refresh",null); mv.type="button"; mv.title="Move status"; mv.setAttribute("aria-label","Move "+i.key+" to another status"); mv.onclick=function(){ openAction(i.key,"move"); }; actd.appendChild(mv);
+    var cm=withIcon("button","btn ghost","bubble",null); cm.type="button"; cm.title="Add a comment"; cm.setAttribute("aria-label","Comment on "+i.key); cm.onclick=function(){ openAction(i.key,"comment"); }; actd.appendChild(cm);
     var cpk=withIcon("button","btn ghost","copy",null); cpk.type="button"; cpk.title="Copy "+i.key; cpk.setAttribute("aria-label","Copy "+i.key); cpk.onclick=function(){ copy(i.key+" "+(jget(i,"summary")||"")); }; actd.appendChild(cpk);
     row.appendChild(actd);
+    var xp=actionPanel(i,row); if(xp) row.appendChild(xp);
     return row;
   }
 
@@ -1085,6 +1093,55 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
 
 
 
+
+
+  /* Jira quick actions: move status, add comment (writes only on an explicit second click) */
+  var OPEN_X={};
+  function payloadOf(res){ var p=res&&res.payload; if(typeof p==="string"){ try{ p=JSON.parse(p); }catch(e){} } return p; }
+  async function loadTransitions(key){
+    var res=await JIRA.mcp.callTool(jserver(),"executeRead",{name:"listJiraIssueTransitions",cloudId:JIRA.cfg.cloudId,inputs:{issueIdOrKey:key}},{cache:false});
+    var p=payloadOf(res)||{}; var t=(p.data&&p.data.transitions)||p.transitions||[];
+    return t.filter(function(x){ return x&&x.id&&x.isAvailable!==false; });
+  }
+  function actionPanel(i,row){
+    var key=i.key, st=OPEN_X[key]; if(!st) return null;
+    var x=el("div","tk-x");
+    function done(msg){ toast(msg,"check"); delete OPEN_X[key]; JIRA.mcp&&JIRA.mcp.invalidate&&JIRA.mcp.invalidate(jserver(),"searchJiraIssuesUsingJql").catch(function(){}); jiraLoad(true); if(ASK.q&&ASK.jql){ var q=ASK.q; askJira(q); } }
+    function fail(e){ st.busy=false; st.err=(e&&e.code==="tool_error"&&e.message)?String(e.message).slice(0,200):(e&&e.code==="approval_required"?"Allow Jira changes for this page, then try again.":"Jira didn't accept that. Try again or open the ticket."); renderJira(); }
+    if(st.mode==="move"){
+      if(st.loading){ x.appendChild(el("small",null,"Loading the statuses you can move "+key+" to…")); }
+      else if(!st.list||!st.list.length){ x.appendChild(el("small",null,st.err||"No status changes are available to you for this ticket.")); }
+      else {
+        x.appendChild(el("small",null,st.pick?"Move "+key+" to “"+(st.pick.to&&st.pick.to.name||st.pick.name)+"”?":"Move "+key+" to:"));
+        var r=el("div","row");
+        if(!st.pick) st.list.forEach(function(t){ var b=el("button","fchip"); b.type="button"; var dot=el("i"); var ck=t.to&&t.to.statusCategory&&t.to.statusCategory.key; dot.style.background=ck==="done"?"var(--ok)":ck==="indeterminate"?"var(--accent)":"var(--ink-3)"; b.appendChild(dot); b.appendChild(document.createTextNode((t.to&&t.to.name)||t.name)); b.title="Transition: "+t.name; b.onclick=function(){ st.pick=t; renderJira(); }; r.appendChild(b); });
+        else {
+          var go=withIcon("button","btn go","check",st.busy?"Moving…":"Yes, move it"); go.type="button"; go.disabled=!!st.busy;
+          go.onclick=async function(){ st.busy=true; renderJira(); try{ await JIRA.mcp.callTool(jserver(),"transitionJiraIssue",{cloudId:JIRA.cfg.cloudId,issueIdOrKey:key,transitionId:String(st.pick.id)},{cache:false}); done(key+" moved to "+((st.pick.to&&st.pick.to.name)||st.pick.name)); }catch(e){ fail(e); } };
+          r.appendChild(go); var bk=el("button","btn ghost","Back"); bk.type="button"; bk.onclick=function(){ st.pick=null; renderJira(); }; r.appendChild(bk);
+        }
+        x.appendChild(r);
+        if(st.err) x.appendChild(el("small",null,st.err));
+      }
+    } else if(st.mode==="comment"){
+      var ta=el("textarea"); ta.id="cm-"+key; ta.placeholder="Comment on "+key+" (markdown)"; ta.value=st.text||""; ta.oninput=function(){ st.text=ta.value; st.confirm=false; }; x.appendChild(ta);
+      var r2=el("div","row");
+      var post=withIcon("button","btn "+(st.confirm?"go":"primary"),"send",st.busy?"Posting…":st.confirm?"Post to Jira now":"Post comment"); post.type="button"; post.disabled=!!st.busy;
+      post.onclick=async function(){ var t=(st.text||"").trim(); if(!t){ toast("Write a comment first","warn"); return; } if(/<[^>]+>/.test(t)){ toast("Fill in the <placeholder> first","warn"); return; } if(!st.confirm){ st.confirm=true; renderJira(); return; }
+        st.busy=true; renderJira(); try{ await JIRA.mcp.callTool(jserver(),"addOrEditJiraIssueComment",{cloudId:JIRA.cfg.cloudId,issueIdOrKey:key,commentBody:t},{cache:false}); done("Comment posted on "+key); }catch(e){ fail(e); } };
+      r2.appendChild(post);
+      r2.appendChild(el("small",null,st.confirm?"Everyone who can see "+key+" will see this.":"Nothing is posted until you confirm."));
+      x.appendChild(r2); if(st.err) x.appendChild(el("small",null,st.err));
+    }
+    return x;
+  }
+  function openAction(key,mode){
+    if(OPEN_X[key]&&OPEN_X[key].mode===mode){ delete OPEN_X[key]; renderJira(); return; }
+    var st=OPEN_X[key]={mode:mode}; renderJira();
+    if(mode==="move"){ st.loading=true; renderJira();
+      (async function(){ try{ if(!JIRA.mcp) JIRA.mcp=await window.claude.use("mcp"); st.list=await loadTransitions(key); }catch(e){ st.err=e&&e.code==="approval_required"?"Allow Jira for this page, then try again.":"Couldn't load statuses for "+key+"."; st.list=[]; } st.loading=false; renderJira(); })(); }
+    else setTimeout(function(){ var t=$("cm-"+key); if(t) t.focus(); },30);
+  }
 
   /* standup generator */
   var SU={open:false,loading:false,text:"",err:null,ctl:null};
