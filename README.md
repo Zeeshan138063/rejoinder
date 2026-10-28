@@ -110,7 +110,7 @@ If your company has rules about AI tools reading work chat, check them before yo
 
 ## Limits
 
-- **Hourly, not instant.** Scheduled tasks run at most once an hour. For instant alerts from VIPs, set up a Power Automate (Teams) or Slack workflow that notifies your phone. Recipes are welcome as contributions.
+- **Hourly, not instant.** Scheduled tasks run at most once an hour. For instant alerts from VIPs, follow the [instant alerts recipe](docs/instant-alerts.md) (Power Automate for Teams, Workflow Builder for Slack).
 - **No direct send.** Most chat connectors are read-only by default. The Send button opens your chat app with the reply ready, or copies it.
 - **Voice takes about a week to settle.** Edit drafts freely at first; every edit improves the next ones.
 
@@ -123,7 +123,7 @@ If your company has rules about AI tools reading work chat, check them before yo
 - [ ] Focus mode: hold non-urgent drafts during meetings
 - [ ] Team mode: shared "who is waiting on whom" board
 - [ ] Prefilled-compose links for Slack and Google Chat
-- [ ] Instant VIP alerts recipe (Power Automate / Slack workflows)
+- [x] Instant VIP alerts recipe (Power Automate / Slack workflows)
 
 ## Repository layout
 
