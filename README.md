@@ -117,7 +117,7 @@ If your company has rules about AI tools reading work chat, check them before yo
 ## Roadmap
 
 - [x] Morning brief and end-of-day wrap
-- [ ] Standup prep from tracker and chat
+- [x] Standup prep from tracker and chat (Write my standup, in the Jira tab)
 - [ ] PR review queue and approvals queue
 - [ ] Meeting transcripts to decisions and action items
 - [ ] Focus mode: hold non-urgent drafts during meetings

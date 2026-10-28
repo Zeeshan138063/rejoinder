@@ -177,6 +177,11 @@ kbd{font:11px var(--mono);color:var(--ink-3);border:1px solid var(--line-2);bord
 .jfresh .iconbtn{width:30px;height:30px}
 .jfresh .iconbtn.spin svg.i{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.standup{background:var(--surface);border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+.standup .sh{display:flex;align-items:center;gap:8px}
+.standup .sh b{flex:1}
+.standup textarea{width:100%;box-sizing:border-box;min-height:120px;resize:vertical;border:1px solid var(--line-2);border-radius:10px;background:var(--bg);color:var(--ink);font:14px/1.55 var(--sans);padding:10px 12px}
+.standup small{color:var(--ink-3);font-size:12px}
 .jgroup{display:flex;flex-direction:column;gap:8px}
 .jgh{display:flex;align-items:center;gap:8px;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);padding:6px 2px 0}
 .jgh .count{text-transform:none}
@@ -1037,8 +1042,10 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     bar.appendChild(select("jproj","Project",JIRA.proj,[["all","All projects"]].concat(Object.keys(projs).sort().map(function(k){ return [k,k+" · "+projs[k]]; })),function(v){ JIRA.proj=v; }));
     bar.appendChild(select("jsort","Sort",JIRA.sort,[["priority","Sort: priority"],["due","Sort: due date"],["updated","Sort: recently updated"],["oldest","Sort: least recently updated"],["created","Sort: newest"]],function(v){ JIRA.sort=v; }));
     bar.appendChild(select("jgroup","Group",JIRA.group,[["project","Group: project"],["status","Group: status"],["epic","Group: epic"],["type","Group: type"],["none","No grouping"]],function(v){ JIRA.group=v; }));
+    var sb=withIcon("button","btn","spark","Write my standup"); sb.type="button"; sb.addEventListener("pointerdown",ripple); sb.onclick=writeStandup; bar.appendChild(sb);
     var fr=el("div","jfresh"); var ago2=JIRA.storedAt?fmtMins(Math.max(0,Math.round((Date.now()-JIRA.storedAt)/60000))):"–"; fr.appendChild(el("span",null,JIRA.loading?"refreshing…":"updated "+ago2+" ago")); var rb=el("button","iconbtn"+(JIRA.loading?" spin":"")); rb.type="button"; rb.title="Refresh (r)"; rb.setAttribute("aria-label","Refresh Jira"); rb.appendChild(icon("refresh")); rb.onclick=function(){ jiraLoad(true); }; fr.appendChild(rb); bar.appendChild(fr);
     box.appendChild(bar);
+    if(SU.open) box.appendChild(standupPanel());
     if(JIRA.err){ var w=el("div","gaps"); w.appendChild(icon("warn")); w.appendChild(el("span",null,"Couldn't refresh just now. Showing the last loaded tickets.")); box.appendChild(w); }
 
     var list=all.filter(function(i){
@@ -1077,6 +1084,45 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
 
 
 
+
+
+  /* standup generator */
+  var SU={open:false,loading:false,text:"",err:null,ctl:null};
+  async function kbText(id){ try{ if(!db) return ""; var sn=await db.doc("kb/"+id).get(); var v=sn.exists?sn.data():null; return v&&typeof v.text==="string"?v.text.slice(0,6000):""; }catch(e){ return ""; } }
+  async function writeStandup(){
+    if(SU.ctl) SU.ctl.abort();
+    SU={open:true,loading:true,text:"",err:null,ctl:new AbortController()}; var my=SU; renderJira();
+    try{
+      var sample=await window.claude.use("sample"); if(!sample) throw {code:"sample_unavailable"};
+      var r=await jiraSearch("assignee = currentUser() AND updated >= -1d ORDER BY updated DESC",false,1);
+      var line=function(i){ var st=jget(i,"status")||{}; return i.key+" ["+(st.name||"")+"] "+(jget(i,"summary")||""); };
+      var touched=r.issues.slice(0,12).map(line), prog=(JIRA.issues||[]).filter(function(i){ return catOf(i)==="indeterminate"; }).slice(0,8).map(line);
+      var high=(JIRA.issues||[]).filter(function(i){ var di=dueInfo(i); return pri(i).rank<=1||(di&&di.days<=1); }).slice(0,6).map(line);
+      var sent=state.drafts.filter(function(d){ return d.status==="sent" && d.doneAt && (Date.now()-Date.parse(d.doneAt))<864e5; }).slice(0,8).map(function(d){ return (d.sender||"")+": "+String(d.message||"").slice(0,80); });
+      var waiting=state.drafts.filter(function(d){ return bucket(d)==="open"; }).slice(0,6).map(function(d){ return (d.sender||"")+": "+String(d.message||"").slice(0,80); });
+      var voice=await kbText("voice");
+      var prompt="Write my daily standup update, in my own voice, ready to paste into Teams.\n"+
+        "Format exactly three short sections:\nYesterday:\n- ...\nToday:\n- ...\nBlockers:\n- ... (or 'none')\n"+
+        "1-3 bullets each, each under 15 words, with ticket keys. No greeting, no sign-off, no emoji. Use only the facts below; don't invent progress.\n\n"+
+        (voice?"MY WRITING STYLE:\n"+voice.slice(0,2500)+"\n\n":"")+
+        "TICKETS I UPDATED IN THE LAST 24H:\n"+(touched.join("\n")||"none")+"\n\nTICKETS IN PROGRESS NOW:\n"+(prog.join("\n")||"none")+
+        "\n\nHIGH PRIORITY OR DUE SOON:\n"+(high.join("\n")||"none")+"\n\nREPLIES I SENT IN THE LAST 24H:\n"+(sent.join("\n")||"none")+
+        "\n\nREQUESTS STILL WAITING ON ME:\n"+(waiting.join("\n")||"none");
+      var out=await sample(prompt,{modelTier:"quick",cache:false,signal:my.ctl.signal,onText:function(e){ if(SU!==my) return; my.text=e.text; var t=$("su-text"); if(t) t.value=e.text; }});
+      if(SU!==my) return; my.text=out.text;
+    }catch(e){ if(SU!==my) return; if(e&&e.code==="cancelled"){ SU={open:false,loading:false,text:"",err:null,ctl:null}; renderJira(); return; } my.err=e||{code:"upstream_error"}; }
+    my.loading=false; renderJira();
+  }
+  function standupPanel(){
+    var p=el("div","standup"); var h=el("div","sh"); h.appendChild(icon("spark")); h.appendChild(el("b",null,"Standup draft"));
+    if(!SU.loading){ var rg=withIcon("button","btn ghost","refresh","Regenerate"); rg.type="button"; rg.onclick=writeStandup; h.appendChild(rg); }
+    var cl=withIcon("button","btn ghost","x"); cl.type="button"; cl.setAttribute("aria-label","Close standup"); cl.onclick=function(){ if(SU.ctl) SU.ctl.abort(); SU={open:false,loading:false,text:"",err:null,ctl:null}; renderJira(); }; h.appendChild(cl);
+    p.appendChild(h);
+    if(SU.err){ var c=SU.err.code; p.appendChild(el("small",null,c==="not_granted"||c==="sample_unavailable"?"Allow Claude for this page to write your standup.":c==="rate_limited"?"Too many requests. Try again in a few seconds.":"Couldn't write the standup. Try again.")); return p; }
+    var ta=el("textarea"); ta.id="su-text"; ta.value=SU.text||(SU.loading?"Writing from your Jira activity and sent replies…":""); ta.setAttribute("aria-label","Standup draft"); p.appendChild(ta);
+    var row=el("div","jbar"); var cp=withIcon("button","btn primary","copy","Copy standup"); cp.type="button"; cp.disabled=SU.loading; cp.onclick=function(){ copy(ta.value,ta); }; row.appendChild(cp); row.appendChild(el("small",null,"Built from tickets you touched in the last 24h, what's in progress, and replies you sent.")); p.appendChild(row);
+    return p;
+  }
 
   /* live Jira status on reply cards */
   var KEYRE=/\b[A-Z][A-Z0-9]{1,9}-\d+\b/g, TKX={}, tkPending={}, tkTimer=null;
