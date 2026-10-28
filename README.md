@@ -43,6 +43,9 @@ It never sends anything on its own.
 | **Commitment tracker** | Catches your own "I'll check", "will send by EOD" and adds them to your task list, along with what you are waiting on from others. |
 | **Learns from your edits** | When you change a draft before sending, the difference is saved and used for the next drafts. |
 | **Security check** | Flags it if you posted a password or token in chat. |
+| **Morning brief & day wrap** | `/reply-brief` pins what to reply to first, today's meetings, due tickets, promises and a standup draft to the top of the queue. |
+| **PR review queue** | Review requests people send you in chat, with how long each has waited. |
+| **Insights** | On the Sent tab: typical reply time, % of drafts sent as written, urgent answered within 2h, busiest people and chats, a 7-day chart. |
 | **My Jira tab** (optional) | Your open tickets live from Jira: priority, type, status, epic, due date, labels, stale tickets and tickets someone asked about in chat. Filter, sort and group by project, status, epic or type. |
 | **Ask Jira** | Type a question such as "how many tickets closed today?" or "bugs assigned to Sam". Claude turns it into JQL and shows the count, To do / In progress / Done stats and a per-assignee breakdown. |
 

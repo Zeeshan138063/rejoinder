@@ -324,6 +324,20 @@ button.wb[aria-pressed="true"]{background:var(--accent-soft)}
 .pr .pm{grid-column:1;font-size:12.5px;color:var(--ink-3)}
 .pr .pa{grid-row:1 / span 2;grid-column:2;display:flex;gap:4px}
 
+.insights{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
+.insights h3{margin:0;display:flex;align-items:center;gap:8px;font-size:14.5px}
+.insights h3 small{font:400 12px var(--mono);color:var(--ink-3);margin-left:auto}
+.ins-k{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ins-k div{background:var(--surface-2);border-radius:11px;padding:8px 10px}
+.ins-k b{display:block;font:600 18px var(--sans);font-variant-numeric:tabular-nums}
+.ins-k span{font-size:11.5px;color:var(--ink-3)}
+.ins-g{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;align-items:start}
+.ins-chart svg{width:100%;height:auto;display:block}
+.ins-top h4{margin:0 0 6px;font:600 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.ins-top ol{margin:0 0 10px;padding-left:18px;font-size:13px;display:flex;flex-direction:column;gap:3px}
+.ins-top li span{color:var(--ink-3);font-family:var(--mono);font-size:12px}
+@media (max-width:560px){.ins-k{grid-template-columns:repeat(2,minmax(0,1fr))}.ins-g{grid-template-columns:1fr}}
+
 /* empty + skeleton */
 .empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;color:var(--ink-3);padding:40px 20px;border:1px dashed var(--line-2);border-radius:18px;background:color-mix(in srgb,var(--surface) 60%,transparent)}
 .empty strong{color:var(--ink);font-size:16px;font-weight:600}
@@ -430,6 +444,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
   </div>
 
   <details class="prs" id="prs" hidden></details>
+  <section class="insights" id="insights" hidden aria-label="Insights"></section>
   <div class="list" id="list" aria-live="polite"></div>
   <section class="jira" id="jira" hidden aria-label="My Jira tickets"></section>
   <details class="digest" id="digest" hidden>
@@ -744,7 +759,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
     $("greet").firstChild.nodeValue=hi;
     $("greet-sub").textContent=!state.loaded?"Loading your queue":g.open.length?(urgent?urgent+" urgent"+(g.open.length>urgent?", "+(g.open.length-urgent)+" more":"")+" waiting on you":g.open.length+" "+(g.open.length===1?"reply":"replies")+" waiting on you"):"Nothing waiting on you";
 
-    renderFilters(); renderSources(); renderBrief(); renderPRs();
+    renderFilters(); renderSources(); renderBrief(); renderPRs(); renderInsights();
 
     var list=$("list"); list.textContent="";
     if(state.tab==="jira"){ renderJira(); }
@@ -1222,6 +1237,41 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
   }
 
 
+
+  /* insights: last 7 days of sent replies (shown on the Sent tab) */
+  function renderInsights(){
+    var box=$("insights"); if(state.tab!=="done"){ box.hidden=true; return; }
+    var since=Date.now()-7*864e5;
+    var sent=state.drafts.filter(function(d){ return d.status==="sent" && d.doneAt && Date.parse(d.doneAt)>=since; });
+    if(!sent.length){ box.hidden=true; return; }
+    box.hidden=false; box.textContent="";
+    var h=el("h3"); h.appendChild(icon("spark")); h.appendChild(document.createTextNode("Your last 7 days")); h.appendChild(el("small",null,sent.length+" replies sent")); box.appendChild(h);
+    var waits=sent.filter(function(d){ return d.receivedAt; }).map(function(d){ return Math.max(0,(Date.parse(d.doneAt)-Date.parse(d.receivedAt))/60000); }).sort(function(a,b){ return a-b; });
+    var med=waits.length?waits[Math.floor(waits.length/2)]:0;
+    var unedited=sent.filter(function(d){ var t=(d.sentDraft||"").trim(); return t && (t===(d.draft||"").trim() || t===(d.alt||"").trim() || (Array.isArray(d.quick)&&d.quick.indexOf(t)>=0)); }).length;
+    var urgentFast=sent.filter(function(d){ return d.lane==="urgent" && d.receivedAt && (Date.parse(d.doneAt)-Date.parse(d.receivedAt))<=2*3600e3; }).length, urgentAll=sent.filter(function(d){ return d.lane==="urgent"; }).length;
+    var k=el("div","ins-k");
+    [[fmtMins(Math.round(med)),"typical reply time"],[Math.round(unedited/sent.length*100)+"%","sent as drafted"],[urgentAll?Math.round(urgentFast/urgentAll*100)+"%":"–","urgent answered < 2h"],[String(state.drafts.filter(function(d){ return d.status==="done" && d.doneAt && Date.parse(d.doneAt)>=since; }).length),"closed, no reply needed"]].forEach(function(x){ var d=el("div"); d.appendChild(el("b",null,x[0])); d.appendChild(el("span",null,x[1])); k.appendChild(d); });
+    box.appendChild(k);
+    var g=el("div","ins-g");
+    /* 7-day bars, one scale, labels from the data */
+    var days=[]; for(var i=6;i>=0;i--){ var dt=new Date(Date.now()-i*864e5); days.push({key:dt.toDateString(),label:dt.toLocaleDateString(undefined,{weekday:"short"}),n:0}); }
+    sent.forEach(function(d){ var kk=new Date(d.doneAt).toDateString(); days.forEach(function(x){ if(x.key===kk) x.n++; }); });
+    var mx=Math.max.apply(null,days.map(function(x){ return x.n; }).concat([1]));
+    var W=320,H=130,pl=6,pb=22,pt=16,bw=(W-pl*2)/7;
+    var svgs='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Replies sent per day, last 7 days"><line x1="'+pl+'" x2="'+(W-pl)+'" y1="'+(H-pb)+'" y2="'+(H-pb)+'" stroke="var(--line-2)"/>';
+    days.forEach(function(x,ix){ var bh=(H-pb-pt)*x.n/mx, x0=pl+ix*bw+bw*.22, y0=H-pb-bh; var today=ix===6;
+      svgs+='<rect x="'+x0.toFixed(1)+'" y="'+y0.toFixed(1)+'" width="'+(bw*.56).toFixed(1)+'" height="'+Math.max(bh,x.n?2:0).toFixed(1)+'" rx="4" fill="'+(today?"var(--accent)":"var(--accent-soft)")+'" stroke="var(--accent)" stroke-opacity="'+(today?0:.5)+'"/>';
+      if(x.n) svgs+='<text x="'+(x0+bw*.28).toFixed(1)+'" y="'+(y0-4).toFixed(1)+'" text-anchor="middle" font-size="10.5" font-family="var(--mono)" fill="var(--ink-2)">'+x.n+'</text>';
+      svgs+='<text x="'+(x0+bw*.28).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle" font-size="10.5" fill="'+(today?"var(--ink)":"var(--ink-3)")+'" font-weight="'+(today?600:400)+'">'+x.label.replace(/[<&>]/g,"")+'</text>'; });
+    svgs+='</svg>';
+    var ch=el("div","ins-chart"); ch.innerHTML=svgs; g.appendChild(ch);
+    function top(field){ var m={}; sent.forEach(function(d){ var v=field==="chat"?((d.chat==="DM"||d.chatType==="oneOnOne")?"Direct messages":d.chat):d[field]; if(v) m[v]=(m[v]||0)+1; }); return Object.keys(m).sort(function(a,b){ return m[b]-m[a]; }).slice(0,3).map(function(n){ return [n,m[n]]; }); }
+    var tp=el("div","ins-top");
+    [["Most replied to","sender"],["Busiest chats","chat"]].forEach(function(x){ var t=top(x[1]); if(!t.length) return; tp.appendChild(el("h4",null,x[0])); var ol=el("ol"); t.forEach(function(r){ var li=el("li"); li.appendChild(document.createTextNode(r[0]+" ")); li.appendChild(el("span",null,"×"+r[1])); ol.appendChild(li); }); tp.appendChild(ol); });
+    g.appendChild(tp); box.appendChild(g);
+  }
+
   /* PR review queue (prs/* written by the hourly run) */
   function renderPRs(){
     var box=$("prs"); var open=(state.prs||[]).filter(function(p){ return p.status!=="done"; }).sort(function(a,b){ return Date.parse(a.at||0)-Date.parse(b.at||0); });
@@ -1328,7 +1378,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{o
       db.doc("meta/digest").onSnapshot(function(s){ state.digest=s.exists?s.data():null; if(state.loaded) render(); });
       db.doc("meta/brief").onSnapshot(function(s){ state.brief=s.exists?s.data():null; if(state.loaded) render(); });
       db.collection("prs").onSnapshot(function(sn){ state.prs=sn.docs.map(function(x){ var o=Object.assign({},x.data()); o.id=x.id; return o; }); if(state.loaded) render(); },function(){});
-      db.doc("meta/jira").onSnapshot(function(s){ var c=s.exists?s.data():null; JIRA.cfg=(c && c.cloudId)?c:null; $("tab-jira").hidden=!JIRA.cfg; if(!JIRA.cfg && state.tab==="jira") state.tab="open"; glide(); if(JIRA.cfg && !JIRA.issues && !JIRA.loading) jiraLoad(false); });
+      db.doc("meta/jira").onSnapshot(function(s){ var c=s.exists?s.data():null; JIRA.cfg=(c && c.cloudId)?c:null; $("tab-jira").hidden=!JIRA.cfg; if(!JIRA.cfg && state.tab==="jira") state.tab="open"; if(state.loaded) render(); else glide(); if(JIRA.cfg && !JIRA.issues && !JIRA.loading) jiraLoad(false); });
     },function(){ firstPaintDone(); });
     setTimeout(function(){ if(!state.loaded) firstPaintDone(); },10000);
   } else { setTimeout(firstPaintDone,0); }
